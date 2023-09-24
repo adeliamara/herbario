@@ -4,7 +4,7 @@ import { UpdateExsiccataSpeciesDto } from './dto/update-exsiccata-species.dto';
 
 @Injectable()
 export class ExsiccataSpeciesService {
-  create(createExsiccataSpecyDto: CreateExsiccataSpeciesDto) {
+  create(createExsiccataSpeciesDto: CreateExsiccataSpeciesDto) {
     return 'This action adds a new exsiccataSpecy';
   }
 
@@ -16,7 +16,7 @@ export class ExsiccataSpeciesService {
     return `This action returns a #${id} exsiccataSpecy`;
   }
 
-  update(id: number, updateExsiccataSpecyDto: UpdateExsiccataSpeciesDto) {
+  update(id: number, updateExsiccataSpeciesDto: UpdateExsiccataSpeciesDto) {
     return `This action updates a #${id} exsiccataSpecy`;
   }
 
