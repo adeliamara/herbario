@@ -55,4 +55,20 @@ export class Exsiccata {
   })
   families?: Family[];
 
+  @ManyToMany(
+    () => Species,
+    species => species.exsiccatas)
+  @JoinTable({
+    name: 'exsiccata_species',
+    joinColumn: {
+      name: 'exsiccata_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'species_id',
+      referencedColumnName: 'id',
+    },
+  })
+  species?: Species[];
+
 }

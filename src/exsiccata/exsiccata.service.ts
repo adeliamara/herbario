@@ -7,6 +7,9 @@ import { Exsiccata } from './entities/exsiccata.entity';
 import { ExsiccataFamily } from 'src/exsiccata-family/entities/exsiccata-family.entity';
 import { Family } from 'src/families/entities/family.entity';
 import { FamiliesService } from 'src/families/families.service';
+import { ExsiccataFamilyService } from 'src/exsiccata-family/exsiccata-family.service';
+import { Species } from 'src/species/entities/species.entity';
+import { ExsiccataSpeciesService } from 'src/exsiccata-species/exsiccata-species.service';
 
 @Injectable()
 export class ExsiccataService {
@@ -15,13 +18,14 @@ export class ExsiccataService {
     private exsiccataRepository: Repository<Exsiccata>,
     
     private familyService: FamiliesService,
+    private exsiccataFamilyService: ExsiccataFamilyService,
+    private speciesService: FamiliesService,
+    private exsiccataSpeciesService: ExsiccataSpeciesService,
 
-    @InjectRepository(ExsiccataFamily)
-    private exsiccataFamilyRepository: Repository<ExsiccataFamily>,
   ){}
 
   async create(createExsiccataDto: CreateExsiccataDto) {
-    const {familyId, ...exsicataData} = createExsiccataDto;
+    const {familyId, speciesId, ...exsicataData} = createExsiccataDto;
     const exsiccata = await this.exsiccataRepository.save(createExsiccataDto);
     if(!exsiccata){
       throw new NotFoundException()
@@ -33,7 +37,14 @@ export class ExsiccataService {
       throw new NotFoundException()
     }
 
+    let species: Species = await this.speciesService.findOne(familyId);
+    
+    if(!species){
+      throw new NotFoundException()
+    }
+
     exsiccata.families = [family]
+    exsiccata.species = [species]
     return this.exsiccataRepository.save(exsiccata); 
   }
 
@@ -67,6 +78,6 @@ export class ExsiccataService {
     throw new NotFoundException()
     }
     
-    await this.exsiccataFamilyRepository.save({exsiccataId: exsiccataId, familyId: familyId})
+    await this.exsiccataFamilyService.create({exsiccataId: exsiccataId, familyId: familyId})
   }
 }

@@ -5,4 +5,5 @@ export class CreateExsiccataDto {
   longitude: number;
   locationDescription: string;
   familyId: number;
+  speciesId: number;
 }
