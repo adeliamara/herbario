@@ -2,8 +2,9 @@ import { IsNumber, Max, Min } from "class-validator";
 import { Collector } from "src/collectors/entities/collector.entity";
 import { Family } from "src/families/entities/family.entity";
 import { Genus } from "src/genus/entities/genus.entity";
+import { Location } from "src/locations/entities/location.entity";
 import { Species } from "src/species/entities/species.entity";
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Exsiccata {
@@ -16,8 +17,8 @@ export class Exsiccata {
   @Column({ type: 'timestamp', name: 'collection_date' })
   collectionDate: Date;
 
-  // @Column({ type: 'int'})
-  // collection_number_per_collector: number;
+  @Column({ type: 'int'})
+  collectionNumberPerCollector: number;
 
   @IsNumber()
   @Min(-90)
@@ -88,4 +89,10 @@ export class Exsiccata {
     },
   })
   genus?: Genus[];
+
+  @ManyToOne(() => Collector, collector => collector.exsiccatas)
+  collector: Collector;
+
+  @ManyToOne(() => Location, location => location.exsiccatas)
+  location: Location;
 }
