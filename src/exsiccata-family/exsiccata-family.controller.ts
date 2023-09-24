@@ -17,11 +17,6 @@ export class ExsiccataFamilyController {
     return this.exsiccataFamilyService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.exsiccataFamilyService.findOne(+id);
-  }
-
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateExsiccataFamilyDto: UpdateExsiccataFamilyDto) {
     return this.exsiccataFamilyService.update(+id, updateExsiccataFamilyDto);

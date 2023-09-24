@@ -1,26 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { CreateExsiccataFamilyDto } from './dto/create-exsiccata-family.dto';
 import { UpdateExsiccataFamilyDto } from './dto/update-exsiccata-family.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ExsiccataFamily } from './entities/exsiccata-family.entity';
 
 @Injectable()
 export class ExsiccataFamilyService {
+  constructor(
+    @InjectRepository(ExsiccataFamily)
+    private exsiccataFamilyRepository: Repository<ExsiccataFamily>
+  ){}
+
   create(createExsiccataFamilyDto: CreateExsiccataFamilyDto) {
-    return 'This action adds a new exsiccataFamily';
+    return this.exsiccataFamilyRepository.save(createExsiccataFamilyDto);
   }
 
   findAll() {
-    return `This action returns all exsiccataFamily`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} exsiccataFamily`;
+    return this.exsiccataFamilyRepository.find() ;
   }
 
   update(id: number, updateExsiccataFamilyDto: UpdateExsiccataFamilyDto) {
-    return `This action updates a #${id} exsiccataFamily`;
+    return this.exsiccataFamilyRepository.update(id, updateExsiccataFamilyDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} exsiccataFamily`;
+    return this.exsiccataFamilyRepository.delete(id);
   }
 }
