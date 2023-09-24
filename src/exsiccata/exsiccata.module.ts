@@ -17,7 +17,7 @@ import { Location } from 'src/locations/entities/location.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Exsiccata,Family, Species, Genus, Collector, Location])],
   controllers: [ExsiccataController],
-  providers: [ExsiccataService,FamiliesService, GenusService, CollectorsService, LocationsService],
+  providers: [ExsiccataService,FamiliesService, GenusService, CollectorsService, LocationsService, SpeciesService],
   exports: [ExsiccataService]
 })
 export class ExsiccataModule {}
