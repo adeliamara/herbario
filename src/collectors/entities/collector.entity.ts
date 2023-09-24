@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
+import { Exsiccata } from 'src/exsiccata/entities/exsiccata.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class Collector {
@@ -8,12 +9,12 @@ export class Collector {
   @Column({ type: 'varchar', length: 255})
   name: string;
 
-  @Column({ type: 'int', name: 'actual_collect_number'})
-  actualCollectNumber: number;
-
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
   createdAt: Date;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP', name: 'updated_at'  })
   updatedAt: Date;
+
+  @OneToMany(() => Exsiccata, (exsiccata) => exsiccata.collector)
+  exsiccatas: Exsiccata[];
 }

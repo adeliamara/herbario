@@ -12,11 +12,11 @@ export class CollectorsService {
     private collectorRepository: Repository<Collector>
   ){}
 
-  create(createCollectorDto: CreateCollectorDto) {
+  async create(createCollectorDto: CreateCollectorDto) {
     const dataToSave = {
       name: createCollectorDto.name,
+      actualCollectNumber: 0
     };
-
     return this.collectorRepository.save(dataToSave);
   }
 
