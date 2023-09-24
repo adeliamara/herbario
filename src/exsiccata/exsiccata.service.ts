@@ -13,6 +13,7 @@ import { CollectorsService } from 'src/collectors/collectors.service';
 import { Collector } from 'src/collectors/entities/collector.entity';
 import { LocationsService } from 'src/locations/locations.service';
 import { Location } from 'src/locations/entities/location.entity';
+import { SpeciesService } from 'src/species/species.service';
 
 @Injectable()
 export class ExsiccataService {
@@ -21,23 +22,18 @@ export class ExsiccataService {
     private exsiccataRepository: Repository<Exsiccata>,
     
     private familyService: FamiliesService,
-    private speciesService: FamiliesService,
+    private speciesService: SpeciesService,
     private genusService: GenusService,
     private collectorsService: CollectorsService,
     private locationService: LocationsService,
   ){}
 
   async create(createExsiccataDto: CreateExsiccataDto) {
-    const {familyId, speciesId, genusId, collectorId, locationId, ...exsicataData} = createExsiccataDto;
+    const {familyId, speciesId, genusId, collectorId, locationId, ...exsiccataData} = createExsiccataDto;
     
     const collection_number: number = (await this.findAllByCollectorId(collectorId)).length;
-    createExsiccataDto.collectionNumberPerCollector = collection_number;
+    createExsiccataDto.collectionNumberPerCollector = collection_number + 1;
 
-    const exsiccata = await this.exsiccataRepository.save(createExsiccataDto);
-
-    if(!exsiccata){
-      throw new NotFoundException('Exsicata')
-    }
 
     let family: Family = await this.familyService.findOne(familyId);
     
@@ -52,7 +48,6 @@ export class ExsiccataService {
     }
 
     let genus: Genus = await this.genusService.findOne(genusId);
-
 
     if(!genus){
       throw new NotFoundException('Genero')
@@ -70,6 +65,15 @@ export class ExsiccataService {
       throw new NotFoundException('Location')
     }
 
+    //cria instancia sem salvar no banco  (new Exsiccata)
+    const exsiccata = await this.exsiccataRepository.save(createExsiccataDto);
+
+    if(!exsiccata){
+      throw new NotFoundException('Exsicata')
+    }
+
+
+    exsiccata.scientificName = `${family.name} ${species.name}`
     exsiccata.families = [family];
     exsiccata.species = [species];
     exsiccata.genus = [genus];
