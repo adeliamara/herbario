@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
+import { Exsiccata } from 'src/exsiccata/entities/exsiccata.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne, OneToMany } from 'typeorm';
 
+@Entity()
 export class Genus {  
 @PrimaryGeneratedColumn('increment')
 id: number;
@@ -12,4 +14,7 @@ createdAt: Date;
 
 @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP', name: 'updated_at',   readonly: true})
 updatedAt: Date;
+
+@ManyToMany(() => Exsiccata, exsiccata => exsiccata.families)
+exsiccatas?: Exsiccata[];
 }

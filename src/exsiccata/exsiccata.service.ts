@@ -4,12 +4,11 @@ import { UpdateExsiccataDto } from './dto/update-exsiccata.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Exsiccata } from './entities/exsiccata.entity';
-import { ExsiccataFamily } from 'src/exsiccata-family/entities/exsiccata-family.entity';
 import { Family } from 'src/families/entities/family.entity';
 import { FamiliesService } from 'src/families/families.service';
-import { ExsiccataFamilyService } from 'src/exsiccata-family/exsiccata-family.service';
 import { Species } from 'src/species/entities/species.entity';
-import { ExsiccataSpeciesService } from 'src/exsiccata-species/exsiccata-species.service';
+import { Genus } from 'src/genus/entities/genus.entity';
+import { GenusService } from 'src/genus/genus.service';
 
 @Injectable()
 export class ExsiccataService {
@@ -18,14 +17,12 @@ export class ExsiccataService {
     private exsiccataRepository: Repository<Exsiccata>,
     
     private familyService: FamiliesService,
-    private exsiccataFamilyService: ExsiccataFamilyService,
     private speciesService: FamiliesService,
-    private exsiccataSpeciesService: ExsiccataSpeciesService,
-
+    private genusService: GenusService,
   ){}
 
   async create(createExsiccataDto: CreateExsiccataDto) {
-    const {familyId, speciesId, ...exsicataData} = createExsiccataDto;
+    const {familyId, speciesId, genusId, ...exsicataData} = createExsiccataDto;
     const exsiccata = await this.exsiccataRepository.save(createExsiccataDto);
     if(!exsiccata){
       throw new NotFoundException()
@@ -37,14 +34,22 @@ export class ExsiccataService {
       throw new NotFoundException()
     }
 
-    let species: Species = await this.speciesService.findOne(familyId);
+    let species: Species = await this.speciesService.findOne(speciesId);
     
     if(!species){
       throw new NotFoundException()
     }
 
+    let genus: Genus = await this.genusService.findOne(genusId);
+
+
+    if(!genus){
+      throw new NotFoundException()
+    }
+
     exsiccata.families = [family]
     exsiccata.species = [species]
+    exsiccata.genus = [genus]
     return this.exsiccataRepository.save(exsiccata); 
   }
 
@@ -63,21 +68,5 @@ export class ExsiccataService {
 
   remove(id: number) {
     return this.exsiccataRepository.delete(id);
-  }
-
-  async createExsiccataFamily(exsiccataId: number, familyId: number): Promise<void> {
-
-    const exsiccata = await this.findOne(exsiccataId);
-
-    if(!exsiccata){
-    throw new NotFoundException()
-    }
-    const family = await this.familyService.findOne(familyId);
-
-    if(!family){
-    throw new NotFoundException()
-    }
-    
-    await this.exsiccataFamilyService.create({exsiccataId: exsiccataId, familyId: familyId})
   }
 }

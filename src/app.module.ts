@@ -12,9 +12,10 @@ import { LocationsModule } from './locations/locations.module';
 import { ExsiccataModule } from './exsiccata/exsiccata.module';
 import { ExsiccataFamilyModule } from './exsiccata-family/exsiccata-family.module';
 import { ExsiccataSpeciesModule } from './exsiccata-species/exsiccata-species.module';
+import { ExsiccataGenusModule } from './exsiccata-genus/exsiccata-genus.module';
 
 @Module({
-  imports: [ TypeOrmModule.forRoot(config), FamiliesModule, SpeciesModule, GenusModule, EnvironmentsModule, CollectorsModule, LocationsModule, ExsiccataModule, ExsiccataFamilyModule, ExsiccataSpeciesModule],
+  imports: [ TypeOrmModule.forRoot(config), FamiliesModule, SpeciesModule, GenusModule, EnvironmentsModule, CollectorsModule, LocationsModule, ExsiccataModule, ExsiccataFamilyModule, ExsiccataSpeciesModule, ExsiccataGenusModule],
   controllers: [AppController],
   providers: [AppService],
 })

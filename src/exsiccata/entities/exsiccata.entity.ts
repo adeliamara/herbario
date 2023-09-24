@@ -1,7 +1,9 @@
 import { IsNumber, Max, Min } from "class-validator";
+import { Collector } from "src/collectors/entities/collector.entity";
 import { Family } from "src/families/entities/family.entity";
+import { Genus } from "src/genus/entities/genus.entity";
 import { Species } from "src/species/entities/species.entity";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Exsiccata {
@@ -71,4 +73,19 @@ export class Exsiccata {
   })
   species?: Species[];
 
+  @ManyToMany(
+    () => Genus,
+    genus => genus.exsiccatas)
+  @JoinTable({
+    name: 'exsiccata_genus',
+    joinColumn: {
+      name: 'exsiccata_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'genus_id',
+      referencedColumnName: 'id',
+    },
+  })
+  genus?: Genus[];
 }

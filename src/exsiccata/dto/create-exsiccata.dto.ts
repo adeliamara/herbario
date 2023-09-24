@@ -6,4 +6,5 @@ export class CreateExsiccataDto {
   locationDescription: string;
   familyId: number;
   speciesId: number;
+  genusId: number;
 }
