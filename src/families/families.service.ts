@@ -13,7 +13,11 @@ export class FamiliesService {
   ){}
 
   create(createFamilyDto: CreateFamilyDto) {
-    return this.familyRepository.save(createFamilyDto);
+    const dataToSave = {
+      name: createFamilyDto.name,
+    };
+    
+    return this.familyRepository.save(dataToSave);
   }
 
   findAll() {
