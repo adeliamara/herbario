@@ -10,7 +10,7 @@ export class LocationsService {
   constructor(
     @InjectRepository(Location)
     private locationRepository: Repository<Location>
-  ){}
+  ) { }
 
   create(createLocationDto: CreateLocationDto) {
 
@@ -23,7 +23,7 @@ export class LocationsService {
   }
 
   findAll() {
-    return this.locationRepository.find() ;
+    return this.locationRepository.find();
   }
 
   findOne(id: number) {
@@ -31,7 +31,7 @@ export class LocationsService {
   }
 
   update(id: number, updateLocationDto: UpdateLocationDto) {
-      const dataToSave = {
+    const dataToSave = {
       city: updateLocationDto.city,
       state: updateLocationDto.state,
     };
@@ -41,5 +41,24 @@ export class LocationsService {
 
   remove(id: number) {
     return this.locationRepository.delete(id);
+  }
+
+  async findAllStates(): Promise<Location[]> {
+    const query = this.locationRepository.createQueryBuilder('location_table').select('DISTINCT location_table.state', 'state');
+
+    const result = await query.getRawMany();
+
+    return result;
+  }
+
+
+  async findAllCitiesByStateName(state: string): Promise<Location[]> {
+    console.log(state)
+    const queryBuilder = this.locationRepository.createQueryBuilder('location_table')
+      .where('location_table.state ilike :state', { state: '%' + state + '%' });
+
+    const result = await queryBuilder.getRawMany();
+
+    return result;
   }
 }
