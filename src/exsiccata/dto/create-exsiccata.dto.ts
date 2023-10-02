@@ -1,4 +1,5 @@
 export class CreateExsiccataDto {
+  scientificName: string;
   collectionDate: Date;
   latitude: number;
   longitude: number;

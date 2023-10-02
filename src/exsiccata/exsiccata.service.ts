@@ -47,6 +47,8 @@ export class ExsiccataService {
       throw new NotFoundException('Especie')
     }
 
+    createExsiccataDto.scientificName = `${family.name} ${species.name}`;
+
     let genus: Genus = await this.genusService.findOne(genusId);
 
     if(!genus){
@@ -65,15 +67,13 @@ export class ExsiccataService {
       throw new NotFoundException('Location')
     }
 
-    //cria instancia sem salvar no banco  (new Exsiccata)
+    //criar instancia sem salvar no banco  (new Exsiccata)
     const exsiccata = await this.exsiccataRepository.save(createExsiccataDto);
 
     if(!exsiccata){
       throw new NotFoundException('Exsicata')
     }
 
-
-    exsiccata.scientificName = `${family.name} ${species.name}`
     exsiccata.families = [family];
     exsiccata.species = [species];
     exsiccata.genus = [genus];
