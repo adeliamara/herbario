@@ -87,8 +87,22 @@ export class ExsiccataService {
     return this.exsiccataRepository.find() ;
   }
 
-  findOne(id: number) {
-    return this.exsiccataRepository.findOneBy({ id: id })
+  async findOne(id: number) {
+    const exsiccata = await this.exsiccataRepository
+    .createQueryBuilder('exsiccata')
+    .leftJoinAndSelect('exsiccata.families', 'family')
+    .leftJoinAndSelect('exsiccata.species', 'species')
+    .leftJoinAndSelect('exsiccata.genus', 'genus')
+    .leftJoinAndSelect('exsiccata.collector', 'collector')
+    .leftJoinAndSelect('exsiccata.location', 'location_table')
+    .where('exsiccata.id = :id', { id })
+    .getOne();
+
+  if (!exsiccata) {
+    throw new NotFoundException(`Exsicata com ID ${id} não encontrada`);
+  }
+
+  return exsiccata;
   }
 
   update(id: number, updateExsiccataDto: UpdateExsiccataDto) {
