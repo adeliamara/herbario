@@ -83,10 +83,19 @@ export class ExsiccataService {
     return this.exsiccataRepository.save(exsiccata); 
   }
 
-  findAll() {
-    return this.exsiccataRepository.find() ;
+  async findAll(): Promise<Exsiccata[]> {
+    const exsiccatas = await this.exsiccataRepository
+      .createQueryBuilder('exsiccata')
+      .leftJoinAndSelect('exsiccata.families', 'family')
+      .leftJoinAndSelect('exsiccata.species', 'species')
+      .leftJoinAndSelect('exsiccata.genus', 'genus')
+      .leftJoinAndSelect('exsiccata.collector', 'collector')
+      .leftJoinAndSelect('exsiccata.location', 'location_table')
+      .getMany();
+  
+    return exsiccatas || [];
   }
-
+  
   async findOne(id: number) {
     const exsiccata = await this.exsiccataRepository
     .createQueryBuilder('exsiccata')
