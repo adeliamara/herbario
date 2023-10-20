@@ -1,5 +1,6 @@
 import { IsNumber, Max, Min } from "class-validator";
 import { Collector } from "src/collectors/entities/collector.entity";
+import { Environment } from "src/environments/entities/environment.entity";
 import { Family } from "src/families/entities/family.entity";
 import { Genus } from "src/genus/entities/genus.entity";
 import { Location } from "src/locations/entities/location.entity";
@@ -19,6 +20,15 @@ export class Exsiccata {
 
   @Column({ type: 'int'})
   collectionNumberPerCollector: number;
+
+  @Column({ type: 'varchar', length: 100, name: 'common_name' })
+  commonName: string;
+
+  @Column({ type: 'varchar', length: 100, name: 'growth_habit' })
+  growthHabit: string;
+  
+  @Column({ type: 'varchar', length: 100})
+  color: string;
 
   @IsNumber()
   @Min(-90)
@@ -95,4 +105,7 @@ export class Exsiccata {
 
   @ManyToOne(() => Location, location => location.exsiccatas)
   location: Location;
+
+  @ManyToOne(() => Environment, environment => environment.exsiccatas)
+  environment: Environment;
 }

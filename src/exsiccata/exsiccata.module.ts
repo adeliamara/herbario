@@ -13,11 +13,13 @@ import { Collector } from 'src/collectors/entities/collector.entity';
 import { CollectorsService } from 'src/collectors/collectors.service';
 import { LocationsService } from 'src/locations/locations.service';
 import { Location } from 'src/locations/entities/location.entity';
+import { EnvironmentsService } from 'src/environments/environments.service';
+import { Environment } from 'src/environments/entities/environment.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Exsiccata,Family, Species, Genus, Collector, Location])],
+  imports: [TypeOrmModule.forFeature([Exsiccata,Family, Species, Genus, Collector, Location, Environment])],
   controllers: [ExsiccataController],
-  providers: [ExsiccataService,FamiliesService, GenusService, CollectorsService, LocationsService, SpeciesService],
+  providers: [ExsiccataService,FamiliesService, GenusService, CollectorsService, LocationsService, SpeciesService, EnvironmentsService],
   exports: [ExsiccataService]
 })
 export class ExsiccataModule {}

@@ -14,6 +14,8 @@ import { Collector } from 'src/collectors/entities/collector.entity';
 import { LocationsService } from 'src/locations/locations.service';
 import { Location } from 'src/locations/entities/location.entity';
 import { SpeciesService } from 'src/species/species.service';
+import { Environment } from 'src/environments/entities/environment.entity';
+import { EnvironmentsService } from 'src/environments/environments.service';
 
 @Injectable()
 export class ExsiccataService {
@@ -26,10 +28,11 @@ export class ExsiccataService {
     private genusService: GenusService,
     private collectorsService: CollectorsService,
     private locationService: LocationsService,
+    private environmentService: EnvironmentsService
   ){}
 
   async create(createExsiccataDto: CreateExsiccataDto) {
-    const {familyId, speciesId, genusId, collectorId, locationId, ...exsiccataData} = createExsiccataDto;
+    const {familyId, speciesId, genusId, collectorId, locationId, environmentId, ...exsiccataData} = createExsiccataDto;
     
     const collection_number: number = (await this.findAllByCollectorId(collectorId)).length;
     createExsiccataDto.collectionNumberPerCollector = collection_number + 1;
@@ -67,11 +70,17 @@ export class ExsiccataService {
       throw new NotFoundException('Location')
     }
 
-    //criar instancia sem salvar no banco  (new Exsiccata)
-    const exsiccata = await this.exsiccataRepository.save(createExsiccataDto);
+    const exsiccata = await this.exsiccataRepository.create(createExsiccataDto);
 
     if(!exsiccata){
       throw new NotFoundException('Exsicata')
+    }
+
+    let environment: Environment = await this.environmentService.findOne(environmentId);
+
+
+    if(!environment){
+      throw new NotFoundException('environment')
     }
 
     exsiccata.families = [family];
@@ -79,6 +88,9 @@ export class ExsiccataService {
     exsiccata.genus = [genus];
     exsiccata.collector = collector;
     exsiccata.location = location;
+    exsiccata.environment = environment;
+
+    console.log(exsiccata)
 
     return this.exsiccataRepository.save(exsiccata); 
   }
@@ -95,7 +107,7 @@ export class ExsiccataService {
   
     return exsiccatas || [];
   }
-  
+
   async findOne(id: number) {
     const exsiccata = await this.exsiccataRepository
     .createQueryBuilder('exsiccata')

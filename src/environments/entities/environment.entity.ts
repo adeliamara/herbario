@@ -1,6 +1,8 @@
 import { IsNotEmpty } from "class-validator";
-import { Column, PrimaryGeneratedColumn } from "typeorm";
+import { Exsiccata } from "src/exsiccata/entities/exsiccata.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
+@Entity()
 export class Environment {
     @PrimaryGeneratedColumn('increment')
     id: number;
@@ -13,5 +15,8 @@ export class Environment {
   
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP', name: 'updated_at'  })
     updatedAt: Date;
+
+    @OneToMany(() => Exsiccata, (exsiccata) => exsiccata.environment)
+    exsiccatas: Exsiccata[];
 }
 
