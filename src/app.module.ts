@@ -13,10 +13,15 @@ import { ExsiccataFamilyModule } from './exsiccata-family/exsiccata-family.modul
 import { ExsiccataSpeciesModule } from './exsiccata-species/exsiccata-species.module';
 import { ExsiccataGenusModule } from './exsiccata-genus/exsiccata-genus.module';
 import { BotanistsModule } from './botanists/botanists.module';
+import { APP_PIPE } from '@nestjs/core';
+import { ValidationPipe } from './pipes/validation.pipe';
 
 @Module({
   imports: [ TypeOrmModule.forRoot(config), FamiliesModule, SpeciesModule, GenusModule, EnvironmentsModule, BotanistsModule, LocationsModule, ExsiccataModule, ExsiccataFamilyModule, ExsiccataSpeciesModule, ExsiccataGenusModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,    {
+    provide: APP_PIPE,
+    useClass: ValidationPipe,
+  },],
 })
 export class AppModule {}
