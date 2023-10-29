@@ -1,4 +1,4 @@
-import { IsNumber, Max, Min } from "class-validator";
+import { IsEmpty, IsNotEmpty, IsNumber, Max, Min } from "class-validator";
 import { Botanist } from "src/botanists/entities/botanist.entity";
 import { Environment } from "src/environments/entities/environment.entity";
 import { Family } from "src/families/entities/family.entity";
@@ -30,14 +30,10 @@ export class Exsiccata {
   @Column({ type: 'varchar', length: 100})
   color: string;
 
-  @IsNumber()
-  @Min(-90)
-  @Max(90)
+  @Column({type: 'float'})
   latitude: number;
 
-  @IsNumber()
-  @Min(-180)
-  @Max(180)
+  @Column({type: 'float'})
   longitude: number;
 
   @Column({ type: 'varchar', length: 255, name: 'location_description' })
@@ -46,6 +42,7 @@ export class Exsiccata {
   @Column({ type: 'timestamp', name: 'deleted_at', nullable: true })
   deletedAt: Date;
 
+  @IsEmpty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
   createdAt: Date;
 
