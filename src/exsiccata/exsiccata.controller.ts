@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { ExsiccataService } from './exsiccata.service';
 import { CreateExsiccataDto } from './dto/create-exsiccata.dto';
 import { UpdateExsiccataDto } from './dto/update-exsiccata.dto';
@@ -18,7 +18,7 @@ export class ExsiccataController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.exsiccataService.findOne(+id);
   }
 
