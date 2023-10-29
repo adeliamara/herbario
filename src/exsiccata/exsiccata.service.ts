@@ -32,10 +32,9 @@ export class ExsiccataService {
   ){}
 
   async create(createExsiccataDto: CreateExsiccataDto) {
-    const {familyId, speciesId, genusId, collectorId, locationId, environmentId, determinatorId, ...exsiccataData} = createExsiccataDto;
-    
-    const collection_number: number = (await this.findAllByCollectorId(collectorId)).length;
-    createExsiccataDto.collectionNumberPerCollector = collection_number + 1;
+    const {familyId, speciesId,collectorId, genusId, environmentId, determinatorId, locationId, ...exsiccataData} = createExsiccataDto;
+     const collection_number: number = (await this.findAllByCollectorId(collectorId)).length;
+     createExsiccataDto.collectionNumberPerCollector = collection_number + 1;
 
     let family: Family = await this.familyService.findOne(familyId);
     
@@ -52,9 +51,9 @@ export class ExsiccataService {
     createExsiccataDto.scientificName = `${family.name} ${species.name}`;
 
     let genus: Genus = await this.genusService.findOne(genusId);
-
+ 
     if(!genus){
-      throw new NotFoundException('Genero')
+      throw new NotFoundException('Especie')
     }
 
     let collector: Botanist = await this.botanistsService.findOne(collectorId);
@@ -69,7 +68,7 @@ export class ExsiccataService {
       throw new NotFoundException('Determinator')
     }
 
-    let location: Location = await this.locationService.findOne(locationId);
+     let location: Location = await this.locationService.findOne(locationId);
 
     if(!location){
       throw new NotFoundException('Location')
@@ -94,8 +93,6 @@ export class ExsiccataService {
     exsiccata.determinator = determinator;
     exsiccata.location = location;
     exsiccata.environment = environment;
-
-    console.log(exsiccata)
 
     return this.exsiccataRepository.save(exsiccata); 
   }
