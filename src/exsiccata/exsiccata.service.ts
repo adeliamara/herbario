@@ -9,13 +9,13 @@ import { FamiliesService } from 'src/families/families.service';
 import { Species } from 'src/species/entities/species.entity';
 import { Genus } from 'src/genus/entities/genus.entity';
 import { GenusService } from 'src/genus/genus.service';
-import { CollectorsService } from 'src/collectors/collectors.service';
-import { Collector } from 'src/collectors/entities/collector.entity';
 import { LocationsService } from 'src/locations/locations.service';
 import { Location } from 'src/locations/entities/location.entity';
 import { SpeciesService } from 'src/species/species.service';
 import { Environment } from 'src/environments/entities/environment.entity';
 import { EnvironmentsService } from 'src/environments/environments.service';
+import { BotanistsService } from 'src/botanists/botanists.service';
+import { Botanist } from 'src/botanists/entities/botanist.entity';
 
 @Injectable()
 export class ExsiccataService {
@@ -26,17 +26,16 @@ export class ExsiccataService {
     private familyService: FamiliesService,
     private speciesService: SpeciesService,
     private genusService: GenusService,
-    private collectorsService: CollectorsService,
+    private botanistsService: BotanistsService,
     private locationService: LocationsService,
     private environmentService: EnvironmentsService
   ){}
 
   async create(createExsiccataDto: CreateExsiccataDto) {
-    const {familyId, speciesId, genusId, collectorId, locationId, environmentId, ...exsiccataData} = createExsiccataDto;
+    const {familyId, speciesId, genusId, collectorId, locationId, environmentId, determinatorId, ...exsiccataData} = createExsiccataDto;
     
     const collection_number: number = (await this.findAllByCollectorId(collectorId)).length;
     createExsiccataDto.collectionNumberPerCollector = collection_number + 1;
-
 
     let family: Family = await this.familyService.findOne(familyId);
     
@@ -58,10 +57,16 @@ export class ExsiccataService {
       throw new NotFoundException('Genero')
     }
 
-    let collector: Collector = await this.collectorsService.findOne(collectorId);
+    let collector: Botanist = await this.botanistsService.findOne(collectorId);
 
     if(!collector){
       throw new NotFoundException('Coletor')
+    }
+
+    let determinator: Botanist = await this.botanistsService.findOne(determinatorId);
+
+    if(!determinator){
+      throw new NotFoundException('Determinator')
     }
 
     let location: Location = await this.locationService.findOne(locationId);
@@ -78,7 +83,6 @@ export class ExsiccataService {
 
     let environment: Environment = await this.environmentService.findOne(environmentId);
 
-
     if(!environment){
       throw new NotFoundException('environment')
     }
@@ -87,6 +91,7 @@ export class ExsiccataService {
     exsiccata.species = [species];
     exsiccata.genus = [genus];
     exsiccata.collector = collector;
+    exsiccata.determinator = determinator;
     exsiccata.location = location;
     exsiccata.environment = environment;
 
@@ -101,7 +106,8 @@ export class ExsiccataService {
       .leftJoinAndSelect('exsiccata.families', 'family')
       .leftJoinAndSelect('exsiccata.species', 'species')
       .leftJoinAndSelect('exsiccata.genus', 'genus')
-      .leftJoinAndSelect('exsiccata.collector', 'collector')
+      .leftJoinAndSelect('exsiccata.collector', 'collector') // Alias para o coletor
+      .leftJoinAndSelect('exsiccata.determinator', 'determinator') 
       .leftJoinAndSelect('exsiccata.location', 'location_table')
       .getMany();
   
@@ -114,7 +120,8 @@ export class ExsiccataService {
     .leftJoinAndSelect('exsiccata.families', 'family')
     .leftJoinAndSelect('exsiccata.species', 'species')
     .leftJoinAndSelect('exsiccata.genus', 'genus')
-    .leftJoinAndSelect('exsiccata.collector', 'collector')
+    .leftJoinAndSelect('exsiccata.collector', 'collector') // Alias para o coletor
+    .leftJoinAndSelect('exsiccata.determinator', 'determinator') 
     .leftJoinAndSelect('exsiccata.location', 'location_table')
     .where('exsiccata.id = :id', { id })
     .getOne();

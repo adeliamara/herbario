@@ -11,4 +11,5 @@ export class CreateExsiccataDto {
   collectionNumberPerCollector: number;
   locationId: number;
   environmentId: number;
+  determinatorId: number;
 }

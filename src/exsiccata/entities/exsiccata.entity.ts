@@ -1,11 +1,11 @@
 import { IsNumber, Max, Min } from "class-validator";
-import { Collector } from "src/collectors/entities/collector.entity";
+import { Botanist } from "src/botanists/entities/botanist.entity";
 import { Environment } from "src/environments/entities/environment.entity";
 import { Family } from "src/families/entities/family.entity";
 import { Genus } from "src/genus/entities/genus.entity";
 import { Location } from "src/locations/entities/location.entity";
 import { Species } from "src/species/entities/species.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Exsiccata {
@@ -100,8 +100,13 @@ export class Exsiccata {
   })
   genus?: Genus[];
 
-  @ManyToOne(() => Collector, collector => collector.exsiccatas)
-  collector: Collector;
+  @ManyToOne(() => Botanist, collector => collector.collectedExsiccatas)
+  @JoinColumn({ name: 'collector_id' }) 
+  collector: Botanist;
+  
+  @ManyToOne(() => Botanist, determinator => determinator.determinedExsiccatas)
+  @JoinColumn({ name: 'determinator_id' }) 
+  determinator: Botanist;
 
   @ManyToOne(() => Location, location => location.exsiccatas)
   location: Location;
