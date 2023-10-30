@@ -13,8 +13,9 @@ import { ExsiccataFamilyModule } from './exsiccata-family/exsiccata-family.modul
 import { ExsiccataSpeciesModule } from './exsiccata-species/exsiccata-species.module';
 import { ExsiccataGenusModule } from './exsiccata-genus/exsiccata-genus.module';
 import { BotanistsModule } from './botanists/botanists.module';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ValidationPipe } from './pipes/validation.pipe';
+import { ErrorMiddleware } from './midleware/logger.midleware';
 
 @Module({
   imports: [ TypeOrmModule.forRoot(config), FamiliesModule, SpeciesModule, GenusModule, EnvironmentsModule, BotanistsModule, LocationsModule, ExsiccataModule, ExsiccataFamilyModule, ExsiccataSpeciesModule, ExsiccataGenusModule],
@@ -22,6 +23,12 @@ import { ValidationPipe } from './pipes/validation.pipe';
   providers: [AppService,    {
     provide: APP_PIPE,
     useClass: ValidationPipe,
-  },],
+  },
+  {
+    provide: APP_INTERCEPTOR,
+    useClass: ErrorMiddleware,
+  },
+
+],
 })
 export class AppModule {}
