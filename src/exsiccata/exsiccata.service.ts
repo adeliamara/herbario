@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExsiccataDto } from './dto/create-exsiccata.dto';
 import { UpdateExsiccataDto } from './dto/update-exsiccata.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Exsiccata } from './entities/exsiccata.entity';
 import { Family } from 'src/families/entities/family.entity';
 import { FamiliesService } from 'src/families/families.service';
@@ -16,6 +16,7 @@ import { Environment } from 'src/environments/entities/environment.entity';
 import { EnvironmentsService } from 'src/environments/environments.service';
 import { BotanistsService } from 'src/botanists/botanists.service';
 import { Botanist } from 'src/botanists/entities/botanist.entity';
+import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class ExsiccataService {
@@ -111,6 +112,24 @@ export class ExsiccataService {
     return exsiccatas || [];
   }
 
+
+  async findAllPaginate(options: IPaginationOptions): Promise<Pagination<Exsiccata>> {
+
+    const queryBuilder = await this.exsiccataRepository
+      .createQueryBuilder('exsiccata')
+      .leftJoinAndSelect('exsiccata.families', 'family')
+      .leftJoinAndSelect('exsiccata.species', 'species')
+      .leftJoinAndSelect('exsiccata.genus', 'genus')
+      .leftJoinAndSelect('exsiccata.collector', 'collector') // Alias para o coletor
+      .leftJoinAndSelect('exsiccata.determinator', 'determinator') 
+      .leftJoinAndSelect('exsiccata.location', 'location_table');
+
+     // queryBuilder.where('exsiccata.removed = :removed', { removed: false });
+     const paginatedResults = await this.paginate(queryBuilder, options);
+
+     return paginatedResults;
+  }
+
   async findOne(id: number) {
     const exsiccata = await this.exsiccataRepository
     .createQueryBuilder('exsiccata')
@@ -143,5 +162,9 @@ export class ExsiccataService {
     return await this.exsiccataRepository.find({
       where: { collector: { id: collectorId } },
     });
+  }
+
+  async paginate(queryBuilder: SelectQueryBuilder<Exsiccata>, options: IPaginationOptions): Promise<Pagination<Exsiccata>> {
+    return await paginate(queryBuilder, options);
   }
 }
