@@ -11,15 +11,25 @@ import {
 
 @Controller('exsiccata')
 export class ExsiccataController {
-  constructor(private readonly exsiccataService: ExsiccataService) {}
+  constructor(private readonly exsiccataService: ExsiccataService) { }
 
   @Post()
   create(@Body() createExsiccataDto: CreateExsiccataDto) {
     return this.exsiccataService.create(createExsiccataDto);
   }
 
+
   @Get()
   findAll(
+    @Query('genus') genusName?: string,
+    @Query('species') speciesName?: string,
+    @Query('family') familyName?: string,
+    @Query('color') color?: string,
+    @Query('growthHabit') growthHabit?: string,
+    @Query('scientificName') scientificName?: string,
+    @Query('commonName') commonName?: string,
+    @Query('collectionDateStart') collectionDateStart?: string,
+    @Query('collectionDateEnd') collectionDateEnd?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number = 20,
   ): Promise<Pagination<Exsiccata>> {
@@ -31,7 +41,19 @@ export class ExsiccataController {
       route: 'exsiccata',
     };
 
-    return this.exsiccataService.findAllPaginate(options);
+    const filterOptions = {
+      genusName,
+      speciesName,
+      familyName,
+      color,
+      growthHabit,
+      scientificName,
+      commonName,
+      collectionDateStart: collectionDateStart ? new Date(collectionDateStart) : undefined,
+      collectionDateEnd: collectionDateEnd ? new Date(collectionDateEnd) : undefined,
+    };
+
+    return this.exsiccataService.findAllPaginateWithFilter(filterOptions,options);
 
   }
 
