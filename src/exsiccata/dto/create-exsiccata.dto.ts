@@ -1,3 +1,4 @@
+import { Type } from "class-transformer";
 import { IsDate, IsEmpty, IsLatitude, IsLongitude, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 import { isBoxedPrimitive } from "util/types";
 
@@ -8,6 +9,7 @@ export class CreateExsiccataDto {
 
   @IsNotEmpty()
   @IsDate()
+  @Type(() => Date)
   collectionDate: Date;
 
   @IsLatitude()
