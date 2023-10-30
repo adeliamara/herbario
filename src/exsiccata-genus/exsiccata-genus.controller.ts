@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { ExsiccataGenusService } from './exsiccata-genus.service';
 import { CreateExsiccataGenusDto } from './dto/create-exsiccata-genus.dto';
 import { UpdateExsiccataGenusDto } from './dto/update-exsiccata-genus.dto';
@@ -18,17 +18,17 @@ export class ExsiccataGenusController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.exsiccataGenusService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExsiccataGenuDto: UpdateExsiccataGenusDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateExsiccataGenuDto: UpdateExsiccataGenusDto) {
     return this.exsiccataGenusService.update(+id, updateExsiccataGenuDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.exsiccataGenusService.remove(+id);
   }
 }

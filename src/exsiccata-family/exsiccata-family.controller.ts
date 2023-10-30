@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { ExsiccataFamilyService } from './exsiccata-family.service';
 import { CreateExsiccataFamilyDto } from './dto/create-exsiccata-family.dto';
 import { UpdateExsiccataFamilyDto } from './dto/update-exsiccata-family.dto';
@@ -18,12 +18,12 @@ export class ExsiccataFamilyController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExsiccataFamilyDto: UpdateExsiccataFamilyDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateExsiccataFamilyDto: UpdateExsiccataFamilyDto) {
     return this.exsiccataFamilyService.update(+id, updateExsiccataFamilyDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.exsiccataFamilyService.remove(+id);
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { GenusService } from './genus.service';
 import { CreateGenusDto } from './dto/create-genus.dto';
 import { UpdateGenusDto } from './dto/update-genus.dto';
@@ -18,17 +18,17 @@ export class GenusController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.genusService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGenusDto: UpdateGenusDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateGenusDto: UpdateGenusDto) {
     return this.genusService.update(+id, updateGenusDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.genusService.remove(+id);
   }
 }

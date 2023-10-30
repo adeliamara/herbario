@@ -18,7 +18,6 @@ export class ExsiccataController {
     return this.exsiccataService.create(createExsiccataDto);
   }
 
-
   @Get()
   findAll(
     @Query('genus') genusName?: string,
@@ -70,12 +69,12 @@ export class ExsiccataController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExsiccataDto: UpdateExsiccataDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateExsiccataDto: UpdateExsiccataDto) {
     return this.exsiccataService.update(+id, updateExsiccataDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.exsiccataService.remove(+id);
   }
 }
