@@ -123,9 +123,12 @@ export class ExsiccataService {
     familyName?: string;
     speciesName?: string;
     genusName?: string;
+    collectorName?: string;
+    determinatorName?: string;
+    environmentName?: string;
   }, options: IPaginationOptions): Promise<Pagination<Exsiccata>> {
 
-      const { scientificName, collectionDateStart, collectionDateEnd, commonName, growthHabit, color, familyName, speciesName, genusName } = filterParams;
+      const { scientificName, collectionDateStart, collectionDateEnd, commonName, growthHabit, color, familyName, speciesName, genusName, determinatorName, collectorName, environmentName } = filterParams;
       const queryBuilder = this.exsiccataRepository.createQueryBuilder('exsiccata');
   
       queryBuilder.leftJoinAndSelect('exsiccata.families', 'family')
@@ -166,7 +169,6 @@ export class ExsiccataService {
         });
       }
   
-  
       if (familyName) {
         queryBuilder.andWhere('family.name LIKE :familyName', { familyName: `%${familyName}%` });
       }
@@ -177,8 +179,20 @@ export class ExsiccataService {
   
       if (genusName) {
         queryBuilder.andWhere('genus.name LIKE :genusName', { genusName: `%${genusName}%` });
+      }  
+      
+      if (collectorName) {
+        queryBuilder.andWhere('collector.name LIKE :collectorName', { collectorName: `%${collectorName}%` });
+      }
+    
+      if (determinatorName) {
+        queryBuilder.andWhere('determinator.name LIKE :determinatorName', { determinatorName: `%${determinatorName}%` });
+      }
+    
+      if (environmentName) {
+        queryBuilder.andWhere('environment.name LIKE :environmentName', { environmentName: `%${environmentName}%` });
       }    
-
+ 
     // queryBuilder.where('exsiccata.removed = :removed', { removed: false });
     const paginatedResults = await this.paginate(queryBuilder, options);
 

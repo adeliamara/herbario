@@ -29,6 +29,9 @@ export class ExsiccataController {
     @Query('scientificName') scientificName?: string,
     @Query('commonName') commonName?: string,
     @Query('collectionDateStart') collectionDateStart?: string,
+    @Query('collector') collectorName?: string,
+    @Query('determinator') determinatorName?: string,
+    @Query('environment') environmentName?: string,
     @Query('collectionDateEnd') collectionDateEnd?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number = 20,
@@ -51,6 +54,9 @@ export class ExsiccataController {
       commonName,
       collectionDateStart: collectionDateStart ? new Date(collectionDateStart) : undefined,
       collectionDateEnd: collectionDateEnd ? new Date(collectionDateEnd) : undefined,
+      collectorName,
+      determinatorName,
+      environmentName
     };
 
     return this.exsiccataService.findAllPaginateWithFilter(filterOptions,options);
