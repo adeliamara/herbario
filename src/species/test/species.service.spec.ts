@@ -3,8 +3,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SpeciesService } from '../species.service';
 import { Species } from '../entities/species.entity';
-import { CreateSpeciesDto } from '../dto/create-species.dto';
-import { UpdateSpeciesDto } from '../dto/update-species.dto';
 
 describe('SpeciesService', () => {
   let speciesService: SpeciesService;
@@ -31,13 +29,8 @@ describe('SpeciesService', () => {
 
   describe('create', () => {
     it('should create a new species', async () => {
-      const createSpeciesDto: CreateSpeciesDto = {
-        name: 'Test Species',
-      };
-      const savedSpecies = {
-        id: 1,
-        name: 'Test Species',
-      };
+      const createSpeciesDto = {name: 'Test Species'};
+      const savedSpecies = {id: 1, name: 'Test Species', createdAt: new Date(), updatedAt: new Date()};
 
       jest.spyOn(speciesRepository, 'save').mockResolvedValue(savedSpecies);
 
@@ -51,14 +44,10 @@ describe('SpeciesService', () => {
     it('should return an array of species', async () => {
       const speciesList = [
         {
-          id: 1,
-          name: 'Species 1',
-          specie: 'fofo',
+          id: 1, name: 'Species 1', specie: 'fofo', createdAt: new Date(), updatedAt: new Date()
         },
         {
-          id: 2,
-          name: 'Species 2',
-          specie: 'fofo',
+          id: 2, name: 'Species 2', specie: 'fofos', createdAt: new Date(), updatedAt: new Date()
         },
       ];
 
@@ -75,7 +64,7 @@ describe('SpeciesService', () => {
       const id = 1;
       const foundSpecies = {
         id: 1,
-        name: 'Found Species',
+        name: 'Found Species', createdAt: new Date(), updatedAt: new Date()
       };
 
       jest.spyOn(speciesRepository, 'findOne').mockResolvedValue(foundSpecies);
@@ -87,17 +76,15 @@ describe('SpeciesService', () => {
   });
 
   describe('update', () => {
-    it('should update a species by ID', async () => {
-      const id = 1;
-      const updateSpeciesDto: UpdateSpeciesDto = {
-        name: 'Updated Species',
-      };
-
-      jest.spyOn(speciesRepository, 'update').mockResolvedValue({ affected: 1 });
-
-      const result = await speciesService.update(id, updateSpeciesDto);
-
-      expect(result).toEqual({ affected: 1 });
+    it('should update a species', async () => {
+      const speciesId = 1;
+      const updateSpeciesDto = {name: 'Updated Species' };
+      const updatedSpecies = new Species();
+  
+      jest.spyOn(speciesRepository, 'update').mockResolvedValue({ affected: 1, raw: [],  generatedMaps: []});
+  
+      const result = await speciesService.update(speciesId, updateSpeciesDto);
+      expect(result).toEqual(updatedSpecies);
     });
   });
 
@@ -105,7 +92,7 @@ describe('SpeciesService', () => {
     it('should delete a species by ID', async () => {
       const id = 1;
 
-      jest.spyOn(speciesRepository, 'delete').mockResolvedValue({ affected: 1 });
+      jest.spyOn(speciesRepository, 'delete').mockResolvedValue({ affected: 1, raw: []});
 
       const result = await speciesService.remove(id);
 

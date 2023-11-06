@@ -36,7 +36,10 @@ describe('ExsiccataService', () => {
 
   describe('create', () => {
     it('should create an Exsiccata', async () => {
-      const createExsiccataDto = { };
+      const createExsiccataDto = {scientificName: 'flor', collectionDate: new Date(), latitude: 123, longitude: 1244, 
+    locationDescription: 'terra', familyId: 21, speciesId: 12, genusId: 33, collectorId: 2, 
+    collectionNumberPerCollector: 9, locationId: 76, environmentId: 5, determinatorId: 6, createdAt: new Date(), 
+    updatedAt: new Date(), deletedAt: new Date()};
       const mockExsiccata = {};
       exsiccataRepository.create.mockReturnValue(mockExsiccata);
 
@@ -51,7 +54,10 @@ describe('ExsiccataService', () => {
       exsiccataRepository.create.mockReturnValue({});
       exsiccataRepository.findOne.mockResolvedValue(undefined);
 
-      const createExsiccataDto = {};
+      const createExsiccataDto = {scientificName: 'gira', collectionDate: new Date(), latitude: 33, 
+      longitude: 334, locationDescription: 'test', familyId: 33, speciesId: 21, genusId: 1, collectorId: 3,
+      collectionNumberPerCollector: 3, locationId: 6, environmentId: 10, determinatorId: 7, createdAt: new Date(), 
+      updatedAt: new Date(), deletedAt: new Date()};
 
       try {
         await exsiccataService.create(createExsiccataDto);

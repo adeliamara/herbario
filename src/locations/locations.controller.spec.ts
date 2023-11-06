@@ -1,12 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LocationsController } from './locations.controller';
 import { LocationsService } from './locations.service';
-import { CreateLocationDto } from './dto/create-location.dto';
-import { UpdateLocationDto } from './dto/update-location.dto';
 
 describe('LocationsController', () => {
-  let locationsController: LocationsController;
-  let locationsService: LocationsService;
+  let controller: LocationsController;
+  let service: LocationsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,76 +12,88 @@ describe('LocationsController', () => {
       providers: [LocationsService],
     }).compile();
 
-    locationsController = module.get<LocationsController>(LocationsController);
-    locationsService = module.get<LocationsService>(LocationsService);
+    controller = module.get<LocationsController>(LocationsController);
+    service = module.get<LocationsService>(LocationsService);
   });
 
   it('should be defined', () => {
-    expect(locationsController).toBeDefined();
+    expect(controller).toBeDefined();
   });
 
-  it('should create a location', async () => {
-    const CreateLocationDto: CreateLocationDto = { city: 'teresina', state: 'pi' };
+  describe('create', () => {
+    it('should create a location', async () => {
+      const createLocationDto= {city: 'a.b', state: 'pi'};
+      const createdLocation = {}; 
 
-    jest.spyOn(locationsService, 'create').mockResolvedValue(CreateLocationDto); 
+      jest.spyOn(service, 'create').mockImplementation(() => createdLocation[Symbol.toStringTag]);
 
-    const result = await locationsController.create(CreateLocationDto);
-    expect(result).toBe(CreateLocationDto);
-  });
-
-  it('should find all locations', async () => {
-    const locations = [];
-
-    jest.spyOn(locationsService, 'findAll').mockResolvedValue(locations); 
-
-    const result = await locationsController.findAll();
-    expect(result).toEqual(locations);
+      expect(await controller.create(createLocationDto)).toBe(createdLocation);
+    });
   });
 
-  it('should update a location'), async () => {
-    const locationId = 1;
-    const updateLocationDto: UpdateLocationDto = {}};
-  
-    jest.spyOn(locationsService, 'update').mockResolvedValue(updateLocationDto);
-  
-    const result = await locationsController.update(locationId, UpdateLocationDto);
-    expect(result).toBe(UpdateLocationDto);
+  describe('findAll', () => {
+    it('should return a list of locations', async () => {
+      const locations = []; 
+
+      jest.spyOn(service, 'findAll').mockImplementation(() => locations[Symbol.toStringTag]);
+
+      expect(await controller.findAll()).toBe(locations);
+    });
   });
-  
-  it('should remove a location', async () => {
-    const locationId = 1;
-  
-    jest.spyOn(LocationsService, 'remove').mockResolvedValue(undefined);
-  
-    const result = await LocationsController.remove(locationId);
-    expect(result).toBeUndefined();
+
+  describe('update', () => {
+    it('should update a location', async () => {
+      const id = 1; 
+      const updateLocationDto = {
+      };
+      const updatedLocation = {};
+
+      jest.spyOn(service, 'update').mockImplementation(() => updatedLocation[Symbol.toStringTag]);
+
+      expect(await controller.update(id, updateLocationDto)).toBe(updatedLocation);
+    });
   });
-  
-  it('should find all cities by state name', async () => {
-    const stateName = 'ExampleState';
-    const cities = [/* provide example city data here */];
-  
-    jest.spyOn(LocationsService, 'findAllCitiesByStateName').mockResolvedValue(cities);
-  
-    const result = await LocationsController.findAllCitysByStateName(stateName);
-    expect(result).toEqual(cities);
+
+  describe('remove', () => {
+    it('should delete a location', async () => {
+      const id = 1; 
+
+      jest.spyOn(service, 'remove').mockImplementation(() => null); 
+
+      expect(await controller.remove(id)).toBe(null);
+    });
   });
-  
-  it('should find all states', async () => {
-    const states = [/* provide example state data here */];
-  
-    jest.spyOn(LocationsService, 'findAllStates').mockResolvedValue(states);
-  
-    const result = await locationsController.findAllStates();
-    expect(result).toEqual(states);
+
+  describe('findAllCitysByStateName', () => {
+    it('should return a list of cities by state name', async () => {
+      const stateName = 'ExampleState';
+      const cities = []; 
+
+      jest.spyOn(service, 'findAllCitiesByStateName').mockImplementation(() => cities[Symbol.toStringTag]);
+
+      expect(await controller.findAllCitysByStateName(stateName)).toBe(cities);
+    });
   });
-  
-  it('should find a location by ID', async () => {
-    const locationId = 1;
-    const location = { /* provide example location data here */ };
-  
-    jest.spyOn(LocationsService, 'findOne').mockResolvedValue(location);
-  
-    const result = await LocationsController.findOne(locationId);
-    expect(result).toEqual(location);
+
+  describe('findAllStates', () => {
+    it('should return a list of states', async () => {
+      const states = []; 
+
+      jest.spyOn(service, 'findAllStates').mockImplementation(() => states[Symbol.toStringTag]);
+
+      expect(await controller.findAllStates()).toBe(states);
+    });
   });
+
+  describe('findOne', () => {
+    it('should return a specific location by ID', async () => {
+      const id = 1; 
+      const location = {}; 
+
+      jest.spyOn(service, 'findOne').mockImplementation(() => location[Symbol.toStringTag]);
+
+      expect(await controller.findOne(id)).toBe(location);
+    });
+  });
+
+});

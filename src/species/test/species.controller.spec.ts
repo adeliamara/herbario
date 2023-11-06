@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SpeciesController } from '../species.controller';
 import { SpeciesService } from '../species.service';
 import { CreateSpeciesDto } from '../dto/create-species.dto';
-import { UpdateSpeciesDto } from '../dto/update-species.dto';
 
 
 describe('SpeciesController', () => {
@@ -28,7 +27,7 @@ describe('SpeciesController', () => {
       const CreateSpeciesDto: CreateSpeciesDto = {name: 'ana'};
       const createdSpecies = {};
 
-      jest.spyOn(speciesService, 'create').mockImplementation(() => createdSpecies);
+      jest.spyOn(speciesService, 'create').mockImplementation(() => createdSpecies[Symbol.toStringTag]);
 
       expect(await speciesController.create(CreateSpeciesDto)).toBe(createdSpecies);
     });
@@ -38,7 +37,7 @@ describe('SpeciesController', () => {
     it('should return an array of species', async () => {
       const speciesList = []; 
 
-      jest.spyOn(speciesService, 'findAll').mockImplementation(() => speciesList);
+      jest.spyOn(speciesService, 'findAll').mockImplementation(() => speciesList[Symbol.toStringTag]);
 
       expect(await speciesController.findAll()).toBe(speciesList);
     });
@@ -49,7 +48,7 @@ describe('SpeciesController', () => {
       const id = 1; 
       const foundSpecies = {}; 
 
-      jest.spyOn(speciesService, 'findOne').mockImplementation(() => foundSpecies);
+      jest.spyOn(speciesService, 'findOne').mockImplementation(() => foundSpecies[Symbol.toStringTag]);
 
       expect(await speciesController.findOne(id)).toBe(foundSpecies);
     });
@@ -58,10 +57,10 @@ describe('SpeciesController', () => {
   describe('update', () => {
     it('should update a species by ID', async () => {
       const id = 1; 
-      const updateSpeciesDto: UpdateSpeciesDto = {};
+      const updateSpeciesDto = {};
       const updatedSpecies = {}; 
 
-      jest.spyOn(speciesService, 'update').mockImplementation(() => updatedSpecies);
+      jest.spyOn(speciesService, 'update').mockImplementation(() => updatedSpecies[Symbol.toStringTag]);
 
       expect(await speciesController.update(id, updateSpeciesDto)).toBe(updatedSpecies);
     });

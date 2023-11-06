@@ -1,12 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { GenusController } from './genus.controller';
-import { GenusService } from './genus.service';
-import { CreateGenusDto } from './dto/create-genus.dto';
-import { UpdateGenusDto } from './dto/update-genus.dto';
+import { Test, TestingModule } from "@nestjs/testing";
+import { GenusController } from "./genus.controller";
+import { GenusService } from "./genus.service";
+
 
 describe('GenusController', () => {
-  let genusController: GenusController;
-  let genusService: GenusService;
+  let controller: GenusController;
+  let service: GenusService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,73 +13,84 @@ describe('GenusController', () => {
       providers: [GenusService],
     }).compile();
 
-    genusController = module.get<GenusController>(GenusController);
-    genusService = module.get<GenusService>(GenusService);
+    controller = module.get<GenusController>(GenusController);
+    service = module.get<GenusService>(GenusService);
   });
 
   it('should be defined', () => {
-    expect(genusController).toBeDefined();
+    expect(controller).toBeDefined();
   });
 
   describe('create', () => {
-    it('should create a new genus', async () => {
-      const createGenusDto: CreateGenusDto = {
-        name: 'Test Genus',
-      };
-      const createdGenus = { id: 1, name: 'Test Genus' };
-      jest.spyOn(genusService, 'create').mockResolvedValue(createdGenus);
+    it('should create a new Genus', async () => {
+      const createGenusDto = {name: 'flor', description: 'example', createdAt: new Date(), updatedAt: new Date()};
+      const createdGenus = {id: 2, name: 'gira', description: 'example', createdAt: new Date(), updatedAt: new Date()};
 
-      const result = await genusController.create(createGenusDto);
+      jest.spyOn(service, 'create').mockResolvedValue(createdGenus);
 
+      const result = await controller.create(createGenusDto);
       expect(result).toBe(createdGenus);
     });
   });
 
   describe('findAll', () => {
-    it('should return an array of genera', async () => {
-      const genera = [{ id: 1, name: 'Genus 1' }, { id: 2, name: 'Genus 2' }];
-      jest.spyOn(genusService, 'findAll').mockResolvedValue(genera);
+    it('should return an array of Genus', async () => {
+      const expectedGenusList = [{ id: 2, name: 'll', createdAt: new Date(), updatedAt: new Date()}];
 
-      const result = await genusController.findAll();
+      jest.spyOn(service, 'findAll').mockResolvedValue(expectedGenusList);
 
-      expect(result).toBe(genera);
+      const result = await controller.findAll();
+      expect(result).toBe(expectedGenusList);
     });
   });
 
   describe('findOne', () => {
-    it('should return a specific genus by ID', async () => {
-      const genusId = 1;
-      const genus = { id: 1, name: 'Test Genus' };
-      jest.spyOn(genusService, 'findOne').mockResolvedValue(genus);
+    it('should return a single Genus', async () => {
+      const id = 1;
+      const expectedGenus = { id: 2, name: 'gagira', createdAt: new Date(), updatedAt: new Date()};
 
-      const result = await genusController.findOne(genusId);
+      jest.spyOn(service, 'findOne').mockResolvedValue(expectedGenus);
 
-      expect(result).toBe(genus);
+      const result = await controller.findOne(id);
+      expect(result).toBe(expectedGenus);
     });
   });
 
   describe('update', () => {
-    it('should update a genus by ID', async () => {
-      const genusId = 1;
-      const updateGenusDto: UpdateGenusDto = { name: 'Updated Genus' };
-      const updatedGenus = { id: 1, name: 'Updated Genus' };
-      jest.spyOn(genusService, 'update').mockResolvedValue(updatedGenus);
+    it('should update a Genus', async () => {
+      const updateGenusDto = {name: 'genus', description: 'nha'};
 
-      const result = await genusController.update(genusId, updateGenusDto);
+      const updatedGenus = await controller.update(8, updateGenusDto);
 
-      expect(result).toBe(updatedGenus);
+      expect(updatedGenus).toBeDefined();
+      expect('gagira').toEqual(updateGenusDto.name);
+      expect('description').toEqual(updateGenusDto.description);
     });
-  });
-
-  describe('remove', () => {
-    it('should remove a genus by ID', async () => {
-      const genusId = 1;
-      const removalResult = { success: true };
-      jest.spyOn(genusService, 'remove').mockResolvedValue(removalResult);
-
-      const result = await genusController.remove(genusId);
-
-      expect(result).toBe(removalResult);
     });
-  });
+
+    describe('remove', () => {
+      it('should remove a genus', async () => {
+        const createGenusDto= {
+          name: 'Test Genus',
+          description: 'Test Description',
+        };
+        const createdGenus = await service.create(createGenusDto);
+  
+        const removedGenus = await controller.remove(createdGenus.id);
+  
+        expect(removedGenus).toBeDefined();
+        expect(8).toEqual(createdGenus.id);
+      });
+  
+      it('should handle not found', async () => {
+        const nonExistentGenusId = 999;
+  
+        try {
+          await controller.remove(nonExistentGenusId);
+        } catch (error) {
+          expect(error.response.status).toBe(404);
+        }
+      });
+    });
+
 });

@@ -59,7 +59,7 @@ describe('EnvironmentsService', () => {
 
   describe('update', () => {
     it('should update an environment', async () => {
-      const id = 1; // Escolha um ID válido
+      const id = 1; 
       const updateEnvironmentDto = { name: 'Updated Environment' };
       const mockEnvironment = new Environment();
       mockEnvironment.id = id;
@@ -73,7 +73,7 @@ describe('EnvironmentsService', () => {
 
   describe('remove', () => {
     it('should remove an environment', async () => {
-      const id = 1; // Escolha um ID válido
+      const id = 1; 
       const mockEnvironment = new Environment();
       mockEnvironment.id = id;
       mockEnvironmentRepository.findOneOrFail.mockReturnValue(mockEnvironment);

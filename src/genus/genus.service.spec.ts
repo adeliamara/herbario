@@ -62,10 +62,8 @@ describe('GenusService', () => {
     const genusId = 1;
     const updateGenusDto = { name: 'Updated Genus' };
     const updatedGenus = new Genus();
-    updatedGenus.id = genusId;
-    updatedGenus.name = 'Updated Genus';
 
-    jest.spyOn(genusRepository, 'update').mockResolvedValue({ affected: 1 });
+    jest.spyOn(genusRepository, 'update').mockResolvedValue({ affected: 1, raw: [], generatedMaps: [] });
     jest.spyOn(genusRepository, 'findOne').mockResolvedValue(updatedGenus);
 
     const result = await genusService.update(genusId, updateGenusDto);
@@ -75,7 +73,7 @@ describe('GenusService', () => {
   it('should remove a genus by ID', async () => {
     const genusId = 1;
 
-    jest.spyOn(genusRepository, 'delete').mockResolvedValue({ affected: 1 });
+    jest.spyOn(genusRepository, 'delete').mockResolvedValue({ affected: 1, raw: [] });
 
     const result = await genusService.remove(genusId);
     expect(result).toBeUndefined();
