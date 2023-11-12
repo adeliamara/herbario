@@ -15,7 +15,6 @@ export class BotanistsService {
   async create(createBotanistDto: CreateBotanistDto) {
     const dataToSave = {
       name: createBotanistDto.name,
-      actualCollectNumber: 0,
       institution: createBotanistDto.institution,
       email: createBotanistDto.email
     };

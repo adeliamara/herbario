@@ -1,6 +1,6 @@
-import { Exsiccata } from "src/exsiccata/entities/exsiccata.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
-import { Species } from "src/species/entities/species.entity";
+import { Species } from "../../species/entities/species.entity";
+import { Exsiccata } from "../../exsiccata/entities/exsiccata.entity";
 
 @Entity('exsiccata_species')
 export class ExsiccataSpecies {
