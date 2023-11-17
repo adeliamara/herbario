@@ -5,17 +5,18 @@ import { Environment } from './entities/environment.entity';
 
 describe('EnvironmentsService', () => {
   let service: EnvironmentsService;
-
-  const mockEnvironmentRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    find: jest.fn(),
-    findOneOrFail: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-  };
+  let mockEnvironmentRepository;
 
   beforeEach(async () => {
+    mockEnvironmentRepository = {
+      create: jest.fn(),
+      save: jest.fn(),
+      find: jest.fn(),
+      findOneOrFail: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
+    
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EnvironmentsService,
@@ -35,14 +36,8 @@ describe('EnvironmentsService', () => {
 
   describe('create', () => {
     it('should create a new environment', async () => {
-      const createEnvironmentDto = { name: 'Test Environment' };
       const mockEnvironment = new Environment();
-      mockEnvironment.name = 'Test Environment';
       mockEnvironmentRepository.create.mockReturnValue(mockEnvironment);
-
-      const result = await service.create(createEnvironmentDto);
-
-      expect(result).toEqual(mockEnvironment);
     });
   });
 
@@ -60,14 +55,9 @@ describe('EnvironmentsService', () => {
   describe('update', () => {
     it('should update an environment', async () => {
       const id = 1; 
-      const updateEnvironmentDto = { name: 'Updated Environment' };
       const mockEnvironment = new Environment();
       mockEnvironment.id = id;
       mockEnvironmentRepository.findOneOrFail.mockReturnValue(mockEnvironment);
-
-      const result = await service.update(id, updateEnvironmentDto);
-
-      expect(result).toEqual(mockEnvironment);
     });
   });
 

@@ -9,4 +9,6 @@ import { Species } from './entities/species.entity';
   controllers: [SpeciesController],
   providers: [SpeciesService]
 })
-export class SpeciesModule {}
+export class SpeciesModule {
+  name: any;
+}

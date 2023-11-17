@@ -1,22 +1,21 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateExsiccataDto } from './dto/create-exsiccata.dto';
-import { UpdateExsiccataDto } from './dto/update-exsiccata.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
-import { Exsiccata } from './entities/exsiccata.entity';
-import { Family } from 'src/families/entities/family.entity';
-import { FamiliesService } from 'src/families/families.service';
-import { Species } from 'src/species/entities/species.entity';
-import { Genus } from 'src/genus/entities/genus.entity';
-import { GenusService } from 'src/genus/genus.service';
-import { LocationsService } from 'src/locations/locations.service';
-import { Location } from 'src/locations/entities/location.entity';
-import { SpeciesService } from 'src/species/species.service';
-import { Environment } from 'src/environments/entities/environment.entity';
-import { EnvironmentsService } from 'src/environments/environments.service';
-import { BotanistsService } from 'src/botanists/botanists.service';
-import { Botanist } from 'src/botanists/entities/botanist.entity';
-import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Exsiccata } from "./entities/exsiccata.entity";
+import { Repository, SelectQueryBuilder } from "typeorm";
+import { FamiliesService } from "../families/families.service";
+import { SpeciesService } from "../species/species.service";
+import { GenusService } from "../genus/genus.service";
+import { BotanistsService } from "../botanists/botanists.service";
+import { EnvironmentsService } from "../environments/environments.service";
+import { LocationsService } from "../locations/locations.service";
+import { CreateExsiccataDto } from "./dto/create-exsiccata.dto";
+import { Family } from "../families/entities/family.entity";
+import { Genus } from "../genus/entities/genus.entity";
+import { Botanist } from "../botanists/entities/botanist.entity";
+import { Environment } from "../environments/entities/environment.entity";
+import { IPaginationOptions, Pagination } from "nestjs-typeorm-paginate";
+import { UpdateExsiccataDto } from "./dto/update-exsiccata.dto";
+
 
 @Injectable()
 export class ExsiccataService {
@@ -43,7 +42,7 @@ export class ExsiccataService {
       throw new NotFoundException('Familia')
     }
 
-    let species: Species = await this.speciesService.findOne(speciesId);
+    let species = await this.speciesService.findOne(speciesId);
 
     if (!species) {
       throw new NotFoundException('Especie')
@@ -69,7 +68,7 @@ export class ExsiccataService {
       throw new NotFoundException('Determinator')
     }
 
-    let location: Location = await this.locationService.findOne(locationId);
+    let location = await this.locationService.findOne(locationId);
 
     if (!location) {
       throw new NotFoundException('Location')
@@ -111,7 +110,6 @@ export class ExsiccataService {
 
     return exsiccatas || [];
   }
-
 
   async findAllPaginateWithFilter(filterParams: {
     scientificName?: string;
@@ -234,7 +232,7 @@ export class ExsiccataService {
   }
 
   async paginate(queryBuilder: SelectQueryBuilder<Exsiccata>, options: IPaginationOptions): Promise<Pagination<Exsiccata>> {
-    return await paginate(queryBuilder, options);
+    return await this.paginate(queryBuilder, options);
   }
  
 

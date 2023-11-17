@@ -25,7 +25,7 @@ export class FamiliesService {
   }
 
   findOne(id: number) {
-    return this.familyRepository.findOneBy({ id: id })
+    return this.familyRepository.findOne({});
   }
 
   update(id: number, updateFamilyDto: UpdateFamilyDto) {

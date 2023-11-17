@@ -1,4 +1,4 @@
-import { Exsiccata } from 'src/exsiccata/entities/exsiccata.entity';
+import { Exsiccata } from '../../exsiccata/entities/exsiccata.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
 
 @Entity()

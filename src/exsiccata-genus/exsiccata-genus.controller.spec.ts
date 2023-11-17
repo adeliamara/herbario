@@ -32,8 +32,8 @@ describe('ExsiccataGenusController', () => {
 
   describe('create', () => {
     it('should create an Exsiccata Genus', async () => {
-      const createExsiccataGenusDto: CreateExsiccataGenusDto = { /* your test data */ };
-      const mockExsiccataGenus = { /* your mock Exsiccata Genus data */ };
+      const createExsiccataGenusDto: CreateExsiccataGenusDto = {};
+      const mockExsiccataGenus = { };
       exsiccataGenusService.create.mockReturnValue(mockExsiccataGenus);
 
       const result = await exsiccataGenusController.create(createExsiccataGenusDto);
@@ -45,7 +45,7 @@ describe('ExsiccataGenusController', () => {
 
   describe('findAll', () => {
     it('should return an array of Exsiccata Genus', async () => {
-      const mockExsiccataGenusArray = [/* your mock Exsiccata Genus data */];
+      const mockExsiccataGenusArray = [];
       exsiccataGenusService.findAll.mockReturnValue(mockExsiccataGenusArray);
 
       const result = await exsiccataGenusController.findAll();
@@ -57,7 +57,7 @@ describe('ExsiccataGenusController', () => {
   describe('findOne', () => {
     it('should return an Exsiccata Genus by ID', async () => {
       const id = 1; 
-      const mockExsiccataGenus = { /* your mock Exsiccata Genus data */ };
+      const mockExsiccataGenus = {};
       exsiccataGenusService.findOne.mockReturnValue(mockExsiccataGenus);
 
       const result = await exsiccataGenusController.findOne(id);
@@ -70,7 +70,7 @@ describe('ExsiccataGenusController', () => {
   describe('update', () => {
     it('should update an Exsiccata Genus by ID', async () => {
       const id = 1; 
-      const updateExsiccataGenusDto: UpdateExsiccataGenusDto = { /* your update DTO data */ };
+      const updateExsiccataGenusDto: UpdateExsiccataGenusDto = { };
       exsiccataGenusService.update.mockResolvedValue({ success: true });
 
       const result = await exsiccataGenusController.update(id, updateExsiccataGenusDto);

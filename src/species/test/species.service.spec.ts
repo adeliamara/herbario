@@ -43,12 +43,8 @@ describe('SpeciesService', () => {
   describe('findAll', () => {
     it('should return an array of species', async () => {
       const speciesList = [
-        {
-          id: 1, name: 'Species 1', specie: 'fofo', createdAt: new Date(), updatedAt: new Date()
-        },
-        {
-          id: 2, name: 'Species 2', specie: 'fofos', createdAt: new Date(), updatedAt: new Date()
-        },
+        {id: 1, name: 'Species 1', specie: 'fofo', createdAt: new Date(), updatedAt: new Date()},
+        {id: 2, name: 'Species 2', specie: 'fofos', createdAt: new Date(), updatedAt: new Date()},
       ];
 
       jest.spyOn(speciesRepository, 'find').mockResolvedValue(speciesList);
@@ -62,10 +58,7 @@ describe('SpeciesService', () => {
   describe('findOne', () => {
     it('should return a species by ID', async () => {
       const id = 1;
-      const foundSpecies = {
-        id: 1,
-        name: 'Found Species', createdAt: new Date(), updatedAt: new Date()
-      };
+      const foundSpecies = {id: 1,name: 'Found Species', createdAt: new Date(), updatedAt: new Date()};
 
       jest.spyOn(speciesRepository, 'findOne').mockResolvedValue(foundSpecies);
 

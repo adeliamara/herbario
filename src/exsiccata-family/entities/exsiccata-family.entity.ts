@@ -1,5 +1,5 @@
-import { Exsiccata } from "src/exsiccata/entities/exsiccata.entity";
-import { Family } from "src/families/entities/family.entity";
+import { Exsiccata } from "../../exsiccata/entities/exsiccata.entity";
+import { Family } from "../../families/entities/family.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('exsiccata_family')

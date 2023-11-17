@@ -23,7 +23,7 @@ export class GenusService {
     return this.genusRepository.find() ;
   }
 
-  findOne(id: number) {
+ async findOne(id: number) {
     return this.genusRepository.findOneBy({ id: id })
   }
 

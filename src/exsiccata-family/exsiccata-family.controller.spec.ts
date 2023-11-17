@@ -31,8 +31,8 @@ describe('ExsiccataFamilyController', () => {
 
   describe('create', () => {
     it('should create an Exsiccata Family', async () => {
-      const createExsiccataFamilyDto: CreateExsiccataFamilyDto = { /* your test data */ };
-      const mockExsiccataFamily = { /* your mock Exsiccata Family data */ };
+      const createExsiccataFamilyDto: CreateExsiccataFamilyDto = {};
+      const mockExsiccataFamily = {};
       exsiccataFamilyService.create.mockReturnValue(mockExsiccataFamily);
 
       const result = await exsiccataFamilyController.create(createExsiccataFamilyDto);
@@ -44,7 +44,7 @@ describe('ExsiccataFamilyController', () => {
 
   describe('findAll', () => {
     it('should return an array of Exsiccata Families', async () => {
-      const mockExsiccataFamilyArray = [/* your mock Exsiccata Family data */];
+      const mockExsiccataFamilyArray = [];
       exsiccataFamilyService.findAll.mockReturnValue(mockExsiccataFamilyArray);
 
       const result = await exsiccataFamilyController.findAll();
@@ -55,8 +55,8 @@ describe('ExsiccataFamilyController', () => {
 
   describe('update', () => {
     it('should update an Exsiccata Family by ID', async () => {
-      const id = 1; // Replace with a valid ID
-      const updateExsiccataFamilyDto: UpdateExsiccataFamilyDto = { /* your update DTO data */ };
+      const id = 1;
+      const updateExsiccataFamilyDto: UpdateExsiccataFamilyDto = {};
       exsiccataFamilyService.update.mockReturnValue({ success: true });
 
       const result = await exsiccataFamilyController.update(id, updateExsiccataFamilyDto);
@@ -68,7 +68,7 @@ describe('ExsiccataFamilyController', () => {
 
   describe('remove', () => {
     it('should remove an Exsiccata Family by ID', async () => {
-      const id = 1; // Replace with a valid ID
+      const id = 1;
       exsiccataFamilyService.remove.mockReturnValue({ success: true });
 
       const result = await exsiccataFamilyController.remove(id);

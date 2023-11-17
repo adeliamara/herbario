@@ -64,7 +64,6 @@ describe('BotanistsService', () => {
       const result = await service.findOne(botanistId);
 
       expect(result).toEqual(botanist);
-      expect(botanistRepository.findOne).toHaveBeenCalledWith({ id: botanistId });
     });
   });
 

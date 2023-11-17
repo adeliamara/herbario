@@ -23,13 +23,13 @@ describe('LocationsService', () => {
 
     expect(createdLocation).toHaveProperty('id');
   });
-  it('should return all locations', async () => {
+  it('should return findAll locations', async () => {
     const allLocations = await locationsService.findAll();
   
     expect(allLocations).toHaveLength(1);
   });
 
-  it('should find a location by ID', async () => {
+  it('should findOne a location by ID', async () => {
     const locationId = 1;
     const foundLocation = await locationsService.findOne(locationId);
   

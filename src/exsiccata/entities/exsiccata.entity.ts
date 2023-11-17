@@ -1,11 +1,11 @@
 import { IsEmpty, IsNotEmpty, IsNumber, Max, Min } from "class-validator";
-import { Botanist } from "src/botanists/entities/botanist.entity";
-import { Environment } from "src/environments/entities/environment.entity";
-import { Family } from "src/families/entities/family.entity";
-import { Genus } from "src/genus/entities/genus.entity";
-import { Location } from "src/locations/entities/location.entity";
-import { Species } from "src/species/entities/species.entity";
+import { Botanist } from "../../botanists/entities/botanist.entity";
+import { Environment } from "../../environments/entities/environment.entity";
+import { Family } from "../../families/entities/family.entity";
+import { Location } from "../../locations/entities/location.entity";
+import { Species } from "../../species/entities/species.entity";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Genus } from "../../genus/entities/genus.entity";
 
 @Entity()
 export class Exsiccata {
@@ -110,4 +110,5 @@ export class Exsiccata {
 
   @ManyToOne(() => Environment, environment => environment.exsiccatas)
   environment: Environment;
+  exsiccata: globalThis.Location;
 }
