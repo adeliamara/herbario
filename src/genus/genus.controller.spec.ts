@@ -1,18 +1,24 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { GenusController } from "./genus.controller";
 import { GenusService } from "./genus.service";
-import { GenusModule } from "./genus.module";
-
+import { DeleteResult } from "typeorm";
+import { Genus } from "./entities/genus.entity";
+import { Repository, UpdateResult } from "typeorm";
+import { getRepositoryToken } from "@nestjs/typeorm";
 
 describe('GenusController', () => {
   let controller: GenusController;
   let service: GenusService;
 
-  beforeEach(async () => {
+   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [GenusModule],
       controllers: [GenusController],
-      providers: [GenusService],
+      providers: [GenusService,
+        {
+          provide: getRepositoryToken(Genus),
+          useClass: Repository,
+        },
+      ], 
     }).compile();
 
     controller = module.get<GenusController>(GenusController);
@@ -58,41 +64,37 @@ describe('GenusController', () => {
     });
   });
 
-  describe('update', () => {
     it('should update a Genus', async () => {
-      const updateGenusDto = {name: 'genus', description: 'nha'};
-
-      const updatedGenus = await controller.update(8, updateGenusDto);
-
-      expect(updatedGenus).toBeDefined();
-      expect('gagira').toEqual(updateGenusDto.name);
-      expect('description').toEqual(updateGenusDto.description);
-    });
-    });
-
-    describe('remove', () => {
-      it('should remove a genus', async () => {
-        const createGenusDto= {
-          name: 'Test Genus',
-          description: 'Test Description',
-        };
-        const createdGenus = await service.create(createGenusDto);
+    const id = 1;
+    const updateGenusDto = {};
+    const updateResult: UpdateResult = { affected: 1, raw: {}, generatedMaps: [] };
+    jest.spyOn(service, 'update').mockImplementation(() => Promise.resolve(updateResult));
   
-        const removedGenus = await controller.remove(createdGenus.id);
+    await controller.update(id, updateGenusDto);
   
-        expect(removedGenus).toBeDefined();
-        expect(8).toEqual(createdGenus.id);
-      });
-  
-      it('should handle not found', async () => {
-        const nonExistentGenusId = 999;
-  
-        try {
-          await controller.remove(nonExistentGenusId);
-        } catch (error) {
-          expect(error.response.status).toBe(404);
-        }
-      });
+    expect(service.update).toHaveBeenCalledWith(id, updateGenusDto);
     });
 
+    it('should remove a genus', async () => {
+      const id = 1;
+      const deleteResult: DeleteResult = { affected: 1, raw: {}};
+    
+      jest.spyOn(service, 'remove').mockResolvedValue(deleteResult);
+    
+      const result = await controller.remove(id);
+      expect(result).toEqual(deleteResult);
+    });
+    
+    it('should handle not found', async () => {
+      const nonExistentGenusId = 999;
+    
+      // Modificando a implementação para retornar uma Promise rejeitada
+      jest.spyOn(service, 'remove').mockRejectedValue({ response: { status: 404 } });
+    
+      try {
+        await controller.remove(nonExistentGenusId);
+      } catch (error) {
+        expect(error.response.status).toBe(404);
+      }
+    });
 });

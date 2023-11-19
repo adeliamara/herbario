@@ -6,15 +6,20 @@ import { Genus } from './entities/genus.entity';
 
 describe('GenusService', () => {
   let genusService: GenusService;
-  let genusRepository: Repository<Genus>;
+  let genusRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        GenusService,
+      providers: [GenusService,
         {
           provide: getRepositoryToken(Genus),
-          useClass: Repository,
+          useValue: {
+            save: jest.fn(),
+            find: jest.fn(),
+            findOne: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
+          },
         },
       ],
     }).compile();
@@ -47,21 +52,21 @@ describe('GenusService', () => {
     expect(result).toEqual(genuses);
   });
 
+  describe('findOne', () => {
   it('should findOne a genus by ID', async () => {
     const genusId = 1;
-    const genus = new Genus();
-
-    jest.spyOn(genusRepository, 'findOne').mockResolvedValue(genus);
+    const mockGenus = {};
+    genusRepository.findOne.mockResolvedValue(mockGenus);
 
     const result = await genusService.findOne(genusId);
-    expect(result).toEqual(genus);
+    expect(result).toEqual(mockGenus);
   });
+});
 
   it('should update a genus', async () => {
     const genusId = 1;
     const updateGenusDto = { name: 'Updated Genus' };
-
-    jest.spyOn(genusRepository, 'update').mockResolvedValue({affected: 1, raw: [], generatedMaps: [],});
+    jest.spyOn(genusRepository, 'update').mockResolvedValue({affected: 1, raw: [], generatedMaps: []});
 
     const result = await genusService.update(genusId, updateGenusDto);
     expect(result.affected).toBe(1);

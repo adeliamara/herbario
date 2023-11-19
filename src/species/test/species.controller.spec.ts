@@ -2,7 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SpeciesController } from '../species.controller';
 import { SpeciesService } from '../species.service';
 import { CreateSpeciesDto } from '../dto/create-species.dto';
-
+import { Species } from '../entities/species.entity';
+import { Repository } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { UpdateResult} from 'typeorm';
 
 describe('SpeciesController', () => {
   let speciesController: SpeciesController;
@@ -11,7 +14,12 @@ describe('SpeciesController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [SpeciesController],
-      providers: [SpeciesService],
+      providers: [SpeciesService,
+        {
+          provide: getRepositoryToken(Species),
+          useClass: Repository,
+        },
+      ],
     }).compile();
 
     speciesController = module.get<SpeciesController>(SpeciesController);
@@ -22,49 +30,37 @@ describe('SpeciesController', () => {
     expect(speciesController).toBeDefined();
   });
 
-  describe('create', () => {
     it('should create a new species', async () => {
       const CreateSpeciesDto: CreateSpeciesDto = {name: 'ana'};
-      const createdSpecies = {};
-
-      jest.spyOn(speciesService, 'create').mockImplementation(() => createdSpecies[Symbol.toStringTag]);
+      const createdSpecies = {id: 86, name: 'Pri', createdAt: new Date(), updatedAt: new Date()};
+      jest.spyOn(speciesService, 'create').mockImplementation(() => Promise.resolve(createdSpecies));
 
       expect(await speciesController.create(CreateSpeciesDto)).toBe(createdSpecies);
     });
-  });
 
-  describe('findAll', () => {
-    it('should return an array of species', async () => {
+    it('should Find all return an array of species', async () => {
       const speciesList = []; 
-
-      jest.spyOn(speciesService, 'findAll').mockImplementation(() => speciesList[Symbol.toStringTag]);
+      jest.spyOn(speciesService, 'findAll').mockImplementation(() => Promise.resolve(speciesList as Species[]));
 
       expect(await speciesController.findAll()).toBe(speciesList);
     });
-  });
 
-  describe('findOne', () => {
     it('should return a species by ID', async () => {
       const id = 1; 
-      const foundSpecies = {}; 
-
-      jest.spyOn(speciesService, 'findOne').mockImplementation(() => foundSpecies[Symbol.toStringTag]);
+      const foundSpecies = {id: 32, name: 'titi', createdAt: new Date(), updatedAt: new Date()}; 
+      jest.spyOn(speciesService, 'findOne').mockImplementation(() => Promise.resolve(foundSpecies as Species));
 
       expect(await speciesController.findOne(id)).toBe(foundSpecies);
     });
-  });
 
-  describe('update', () => {
     it('should update a species by ID', async () => {
       const id = 1; 
       const updateSpeciesDto = {};
-      const updatedSpecies = {}; 
+      const updateResult: UpdateResult = { affected: 1, raw: {}, generatedMaps: [] }; 
+      jest.spyOn(speciesService, 'update').mockImplementation(() => Promise.resolve(updateResult));
 
-      jest.spyOn(speciesService, 'update').mockImplementation(() => updatedSpecies[Symbol.toStringTag]);
-
-      expect(await speciesController.update(id, updateSpeciesDto)).toBe(updatedSpecies);
+      expect(await speciesController.update(id, updateSpeciesDto)).toBe(updateResult);
     });
-  });
 
   describe('remove', () => {
     it('should delete a species by ID', async () => {

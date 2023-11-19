@@ -1,6 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LocationsController } from './locations.controller';
 import { LocationsService } from './locations.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository, UpdateResult } from 'typeorm';
+import { Location } from './entities/location.entity';
 
 describe('LocationsController', () => {
   let controller: LocationsController;
@@ -9,7 +12,12 @@ describe('LocationsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [LocationsController],
-      providers: [LocationsService],
+      providers: [LocationsService,
+        {
+          provide: getRepositoryToken(Location),
+          useClass: Repository,
+        },
+      ],
     }).compile();
 
     controller = module.get<LocationsController>(LocationsController);
@@ -23,9 +31,9 @@ describe('LocationsController', () => {
   describe('create', () => {
     it('should create a location', async () => {
       const createLocationDto= {city: 'a.b', state: 'pi'};
-      const createdLocation = {}; 
+      const createdLocation = {id: 2, city: 'the',state: 'pi' }; 
 
-      jest.spyOn(service, 'create').mockImplementation(() => createdLocation[Symbol.toStringTag]);
+      jest.spyOn(service, 'create').mockImplementation(() => Promise.resolve(createdLocation));
 
       expect(await controller.create(createLocationDto)).toBe(createdLocation);
     });
@@ -34,25 +42,22 @@ describe('LocationsController', () => {
   describe('findAll', () => {
     it('should return a list of locations', async () => {
       const locations = []; 
-
-      jest.spyOn(service, 'findAll').mockImplementation(() => locations[Symbol.toStringTag]);
+      jest.spyOn(service, 'findAll').mockImplementation(() => Promise.resolve (locations as Location[]));
 
       expect(await controller.findAll()).toBe(locations);
     });
   });
 
-  describe('update', () => {
     it('should update a location', async () => {
       const id = 1; 
-      const updateLocationDto = {
-      };
-      const updatedLocation = {};
+      const updateLocationDto = {};
+      const updatedResult: UpdateResult = {affected: 1, raw: {}, generatedMaps: [] };
+      jest.spyOn(service, 'update').mockImplementation(() => Promise.resolve(updatedResult));
 
-      jest.spyOn(service, 'update').mockImplementation(() => updatedLocation[Symbol.toStringTag]);
+      await controller.update(id, updateLocationDto);
 
-      expect(await controller.update(id, updateLocationDto)).toBe(updatedLocation);
+      expect(service.update).toHaveBeenCalledWith(id, updateLocationDto);
     });
-  });
 
   describe('remove', () => {
     it('should delete a location', async () => {
@@ -64,36 +69,26 @@ describe('LocationsController', () => {
     });
   });
 
-  describe('findAllCitysByStateName', () => {
     it('should return a list of cities by state name', async () => {
       const stateName = 'ExampleState';
       const cities = []; 
-
-      jest.spyOn(service, 'findAllCitiesByStateName').mockImplementation(() => cities[Symbol.toStringTag]);
+      jest.spyOn(service, 'findAllCitiesByStateName').mockImplementation(() => Promise.resolve(cities as Location[]));
 
       expect(await controller.findAllCitysByStateName(stateName)).toBe(cities);
     });
-  });
 
-  describe('findAllStates', () => {
     it('should return a list of states', async () => {
       const states = []; 
-
-      jest.spyOn(service, 'findAllStates').mockImplementation(() => states[Symbol.toStringTag]);
+      jest.spyOn(service, 'findAllStates').mockImplementation(() =>  Promise.resolve(states as Location[]));
 
       expect(await controller.findAllStates()).toBe(states);
     });
-  });
 
-  describe('findOne', () => {
     it('should return a specific location by ID', async () => {
       const id = 1; 
       const location = {}; 
-
-      jest.spyOn(service, 'findOne').mockImplementation(() => location[Symbol.toStringTag]);
+      jest.spyOn(service, 'findOne').mockImplementation(() => Promise.resolve(location as Location));
 
       expect(await controller.findOne(id)).toBe(location);
     });
-  });
-
 });

@@ -5,7 +5,6 @@ import { Family } from '../entities/family.entity';
 import { CreateFamilyDto } from '../dto/create-family.dto';
 import { UpdateFamilyDto } from '../dto/update-family.dto';
 
-
 describe('FamiliesService', () => {
   let familiesService: FamiliesService;
   const familyRepository = {

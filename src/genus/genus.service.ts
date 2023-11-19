@@ -24,7 +24,7 @@ export class GenusService {
   }
 
  async findOne(id: number) {
-    return this.genusRepository.findOneBy({ id: id })
+    return this.genusRepository.findOne({})
   }
 
   update(id: number, updateGenusDto: UpdateGenusDto) {

@@ -1,4 +1,3 @@
-
 import { Entity, PrimaryGeneratedColumn, Column, Index, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { Exsiccata } from '../../exsiccata/entities/exsiccata.entity';
 

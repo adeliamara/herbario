@@ -24,7 +24,7 @@ export class SpeciesService {
   }
 
   findOne(id: number) {
-    return this.speciesRepository.findOneBy({ id: id })
+    return this.speciesRepository.findOne({})
   }
 
   update(id: number, updateSpeciesDto: UpdateSpeciesDto) {

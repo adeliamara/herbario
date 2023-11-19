@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EnvironmentsController } from './environments.controller';
 import { EnvironmentsService } from './environments.service';
-import { UpdateResult, DeleteResult } from 'typeorm';
+import { UpdateResult} from 'typeorm';
 import { Environment } from './entities/environment.entity';
-
+import { getRepositoryToken } from '@nestjs/typeorm';  // Importe getRepositoryToken
+import { Repository } from 'typeorm';
 
 describe('EnvironmentsController', () => {
   let controller: EnvironmentsController;
@@ -12,7 +13,12 @@ describe('EnvironmentsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [EnvironmentsController],
-      providers: [EnvironmentsService],
+      providers: [EnvironmentsService, 
+        {
+          provide: getRepositoryToken(Environment),
+          useClass: Repository,
+        },
+      ],
     }).compile();
 
     controller = module.get<EnvironmentsController>(EnvironmentsController);
@@ -49,17 +55,19 @@ describe('EnvironmentsController', () => {
   it('should update an environment by ID', async () => {
     const id = 1;
     const updateEnvironmentDto = {};
-    const updatedEnvironment = {};
-    jest.spyOn(service, 'update').mockImplementation(() => Promise.resolve({} as UpdateResult));
-
-    expect(await controller.update(id, updateEnvironmentDto)).toBe(updatedEnvironment);
+    const updateResult: UpdateResult = { affected: 1, raw: {}, generatedMaps: [] };
+    jest.spyOn(service, 'update').mockImplementation(() => Promise.resolve(updateResult));
+  
+    await controller.update(id, updateEnvironmentDto);
+  
+    expect(service.update).toHaveBeenCalledWith(id, updateEnvironmentDto);
   });
 
   it('should remove an environment by ID', async () => {
     const id = 1;
-    const deletedEnvironment = {};
-    jest.spyOn(service, 'remove').mockImplementation(() => Promise.resolve({} as DeleteResult));
+    const deletedEverinments: Environment = {id: 1, name: 'flor', createdAt: new Date(), updatedAt: new Date(), exsiccatas: []}; 
+    jest.spyOn(service, 'remove').mockImplementation(() => Promise.resolve(deletedEverinments));
 
-    expect(await controller.remove(id)).toBe(deletedEnvironment);
+    expect(await controller.remove(id)).toBe(deletedEverinments);
   });
 });

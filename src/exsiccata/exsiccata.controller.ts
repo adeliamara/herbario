@@ -3,11 +3,7 @@ import { ExsiccataService } from './exsiccata.service';
 import { CreateExsiccataDto } from './dto/create-exsiccata.dto';
 import { UpdateExsiccataDto } from './dto/update-exsiccata.dto';
 import { Exsiccata } from './entities/exsiccata.entity';
-import {
-  paginate,
-  Pagination,
-  IPaginationOptions,
-} from 'nestjs-typeorm-paginate';
+import {Pagination,IPaginationOptions,} from 'nestjs-typeorm-paginate';
 
 @Controller('exsiccata')
 export class ExsiccataController {

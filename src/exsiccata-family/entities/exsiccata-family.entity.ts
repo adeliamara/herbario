@@ -1,6 +1,6 @@
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Exsiccata } from "../../exsiccata/entities/exsiccata.entity";
 import { Family } from "../../families/entities/family.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('exsiccata_family')
 export class ExsiccataFamily {

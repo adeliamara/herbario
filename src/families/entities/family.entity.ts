@@ -1,8 +1,11 @@
 import { Exsiccata } from '../../exsiccata/entities/exsiccata.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Family {
+  @Column()
+  scientificName: string;
+
   @PrimaryGeneratedColumn('increment')
   id: number;
 
@@ -15,6 +18,7 @@ export class Family {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP', name: 'updated_at',   readonly: true})
   updatedAt: Date;
   
-  @ManyToMany(() => Exsiccata,     exsiccata => exsiccata.families)
+  @ManyToMany(() => Exsiccata, exsiccata => exsiccata.families)
   exsiccatas?: Exsiccata[];
+  
 }

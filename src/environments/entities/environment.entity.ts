@@ -1,6 +1,6 @@
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn,  CreateDateColumn, UpdateDateColumn} from "typeorm";
 import { Exsiccata } from "../../exsiccata/entities/exsiccata.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import {CreateDateColumn, UpdateDateColumn } from 'typeorm';
+
 
 @Entity()
 export class Environment {

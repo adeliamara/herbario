@@ -16,14 +16,13 @@ import { Environment } from "../environments/entities/environment.entity";
 import { IPaginationOptions, Pagination } from "nestjs-typeorm-paginate";
 import { UpdateExsiccataDto } from "./dto/update-exsiccata.dto";
 
-
 @Injectable()
 export class ExsiccataService {
   constructor(
     @InjectRepository(Exsiccata)
     private exsiccataRepository: Repository<Exsiccata>,
 
-    private familyService: FamiliesService,
+    private familiesService: FamiliesService,
     private speciesService: SpeciesService,
     private genusService: GenusService,
     private botanistsService: BotanistsService,
@@ -33,13 +32,14 @@ export class ExsiccataService {
 
   async create(createExsiccataDto: CreateExsiccataDto) {
     const { familyId, speciesId, collectorId, genusId, environmentId, determinatorId, locationId, ...exsiccataData } = createExsiccataDto;
-    const collection_number: number = (await this.findAllByCollectorId(collectorId)).length;
+    const collection_number: number = (await this.findAllByCollectorId(collectorId))?.length;
+    
     createExsiccataDto.collectionNumberPerCollector = collection_number + 1;
 
-    let family: Family = await this.familyService.findOne(familyId);
+    const family = await this.familiesService.findOne(familyId);
 
     if (!family) {
-      throw new NotFoundException('Familia')
+      throw new NotFoundException('Familia');
     }
 
     let species = await this.speciesService.findOne(speciesId);

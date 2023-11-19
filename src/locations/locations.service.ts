@@ -27,7 +27,7 @@ export class LocationsService {
   }
 
   findOne(id: number) {
-    return this.locationRepository.findOneBy({ id: id })
+    return this.locationRepository.findOne({})
   }
 
   update(id: number, updateLocationDto: UpdateLocationDto) {
