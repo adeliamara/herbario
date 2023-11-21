@@ -1,4 +1,4 @@
-import { Type } from "class-transformer";
+import { Exclude, Type } from "class-transformer";
 import { IsDate, IsEmail, IsEmpty, IsNotEmpty, IsOptional, IsString, IsStrongPassword, isStrongPassword } from "class-validator";
 
 export class CreateUserDto {
@@ -23,7 +23,9 @@ export class CreateUserDto {
 
     @IsStrongPassword()
     @IsNotEmpty()
+    @Exclude({ toPlainOnly: true }) 
     password: string;
+
 
     @IsEmpty()
     removed: boolean;
