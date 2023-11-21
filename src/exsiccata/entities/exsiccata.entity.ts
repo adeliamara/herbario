@@ -1,5 +1,5 @@
 import { IsEmpty, IsNotEmpty, IsNumber, Max, Min } from "class-validator";
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import { Family } from "../../families/entities/family.entity";
 import { Species } from "../../species/entities/species.entity";
 import { Genus } from "../../genus/entities/genus.entity";

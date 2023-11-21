@@ -127,12 +127,12 @@ export class ExsiccataService {
   }, options: IPaginationOptions): Promise<Pagination<Exsiccata>> {
 
       const { scientificName, collectionDateStart, collectionDateEnd, commonName, growthHabit, color, familyName, speciesName, genusName, determinatorName, collectorName, environmentName } = filterParams;
-      const queryBuilder = this.exsiccataRepository.createQueryBuilder('exsiccata');
+      const queryBuilder =  this.exsiccataRepository.createQueryBuilder('exsiccata')
   
-      queryBuilder.leftJoinAndSelect('exsiccata.families', 'family')
+        .leftJoinAndSelect('exsiccata.families', 'family')
         .leftJoinAndSelect('exsiccata.species', 'species')
         .leftJoinAndSelect('exsiccata.genus', 'genus')
-        .leftJoinAndSelect('exsiccata.collector', 'collector') // Alias para o coletor
+        .leftJoinAndSelect('exsiccata.collector', 'collector')
         .leftJoinAndSelect('exsiccata.determinator', 'determinator')
         .leftJoinAndSelect('exsiccata.location', 'location_table')
   
@@ -198,12 +198,11 @@ export class ExsiccataService {
   }
 
   async findOne(id: number) {
-    const exsiccata = await this.exsiccataRepository
-      .createQueryBuilder('exsiccata')
+    const exsiccata = await this.exsiccataRepository.createQueryBuilder('exsiccata')
       .leftJoinAndSelect('exsiccata.families', 'family')
       .leftJoinAndSelect('exsiccata.species', 'species')
       .leftJoinAndSelect('exsiccata.genus', 'genus')
-      .leftJoinAndSelect('exsiccata.collector', 'collector') // Alias para o coletor
+      .leftJoinAndSelect('exsiccata.collector', 'collector') 
       .leftJoinAndSelect('exsiccata.determinator', 'determinator')
       .leftJoinAndSelect('exsiccata.location', 'location_table')
       .where('exsiccata.id = :id', { id })

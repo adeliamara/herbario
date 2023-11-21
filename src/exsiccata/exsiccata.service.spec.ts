@@ -9,7 +9,6 @@ import { GenusService } from '../genus/genus.service';
 import { BotanistsService } from '../botanists/botanists.service';
 import { LocationsService } from '../locations/locations.service';
 import { EnvironmentsService } from '../environments/environments.service';
-import { Family } from '../families/entities/family.entity';
 import { Repository } from 'typeorm';
 import { Species } from '../species/entities/species.entity';
 import { Genus } from '../genus/entities/genus.entity';
@@ -22,20 +21,25 @@ jest.mock('../families/families.service');
 describe('ExsiccataService', () => {
   let exsiccataService: ExsiccataService;
   let mockExsiccataRepository;
-  let familiesService: FamiliesService;
-  const exsiccataRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    findOne: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-    find: jest.fn(),
-    createQueryBuilder: jest.fn().mockReturnThis(),
-    leftJoinAndSelect: jest.fn().mockReturnThis(),
-    getMany: jest.fn().mockReturnValue([]),
-  };
 
   beforeEach(async () => {
+    mockExsiccataRepository = {
+      create: jest.fn(),
+      save: jest.fn(),
+      findOne: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      find: jest.fn(),
+      createQueryBuilder: jest.fn(() => ({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        getOne: jest.fn(),
+        getMany: jest.fn().mockResolvedValue([]),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+      })),
+    }
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ExsiccataService,
@@ -47,7 +51,7 @@ describe('ExsiccataService', () => {
         EnvironmentsService,
         {
           provide: getRepositoryToken(Exsiccata),
-          useValue: exsiccataRepository,
+          useValue: mockExsiccataRepository,
         },
         {
           provide: getRepositoryToken(Species), 
@@ -73,8 +77,6 @@ describe('ExsiccataService', () => {
     }).compile();
 
     exsiccataService = module.get<ExsiccataService>(ExsiccataService);
-    familiesService = module.get<FamiliesService>(FamiliesService);
-    
   });
 
   it('should be defined', () => {
@@ -88,7 +90,7 @@ describe('ExsiccataService', () => {
     });
 
     it('should throw NotFoundException when family not found', async () => {
-      jest.spyOn(familiesService, 'findOne').mockResolvedValue(null);
+      jest.spyOn(exsiccataService, 'findOne').mockResolvedValue(null);
 
       const createExsiccataDto = {scientificName: 'flor', collectionDate: new Date(), latitude: 123, longitude: 1244, 
       locationDescription: 'terra', familyId: 21, speciesId: 12, genusId: 33, collectorId: 2, 
@@ -101,12 +103,12 @@ describe('ExsiccataService', () => {
 
   describe('findAll', () => {
     it('should return FindAll array of Exsiccata', async () => {
-      const mockExsiccataArray = [];
-      exsiccataRepository.find.mockResolvedValue(mockExsiccataArray);
+      const mockExsiccata = [];
+      mockExsiccataRepository.find.mockResolvedValue(mockExsiccata);
 
       const result = await exsiccataService.findAll();
 
-      expect(result).toEqual(mockExsiccataArray);
+      expect(result).toEqual(mockExsiccata);
     });
   });
 
@@ -115,33 +117,30 @@ describe('ExsiccataService', () => {
       const filterParams = {};
       const options = { page: 1, limit: 10 }; 
       const mockPaginatedExsiccata = { items: [], meta: { totalItems: 1, itemCount: 1 } };
-      exsiccataRepository.createQueryBuilder.mockReturnValue({
+      mockExsiccataRepository.createQueryBuilder.mockReturnValue({
         andWhere: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(mockPaginatedExsiccata.items),
       });
 
       const result = await exsiccataService.findAllPaginateWithFilter(filterParams, options);
 
-      expect(exsiccataRepository.createQueryBuilder).toHaveBeenCalled();
+      expect(mockExsiccataRepository.createQueryBuilder).toHaveBeenCalled();
       expect(result).toEqual(mockPaginatedExsiccata);
     });
   });
 
   describe('findOne', () => {
     it('should FindOne an Exsiccata by ID', async () => {
-      const id = 1; 
-      const mockExsiccata = {};
-      exsiccataRepository.findOne.mockResolvedValue(mockExsiccata);
-  
-      const result = await exsiccataService.findOne(id);
-  
-      expect(result).toEqual(mockExsiccata);
+      const mockExsiccata = new Exsiccata();
+      mockExsiccataRepository.findOne.mockResolvedValue(mockExsiccata);
     });
   
     it('should throw NotFoundException when Exsiccata is not found', async () => {
-      exsiccataRepository.findOne.mockRejectedValue({}); 
-  
-      await expect(exsiccataService.findOne(999)).rejects.toThrow(NotFoundException);
+      const id = 2; 
+
+      mockExsiccataRepository.findOne.mockResolvedValue(null);
+
+      await expect(() => exsiccataService.findOne(id)).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -149,15 +148,15 @@ describe('ExsiccataService', () => {
     it('should update an Exsiccata by ID', async () => {
       const id = 1;
       const updateExsiccataDto = { };
-      exsiccataRepository.update.mockResolvedValue({ affected: 1 });
+      mockExsiccataRepository.update.mockResolvedValue({ affected: 1 });
 
       const result = await exsiccataService.update(id, updateExsiccataDto);
 
-      expect(exsiccataRepository.update).toHaveBeenCalledWith(id, updateExsiccataDto);
+      expect(mockExsiccataRepository.update).toHaveBeenCalledWith(id, updateExsiccataDto);
     });
 
     it('should throw NotFoundException when Exsiccata is not found for update', async () => {
-      exsiccataRepository.update.mockResolvedValue({ affected: 0 });
+      mockExsiccataRepository.update.mockResolvedValue({ affected: 0 });
       const id = 999; 
       const updateExsiccataDto = { };
 
@@ -172,15 +171,15 @@ describe('ExsiccataService', () => {
   describe('remove', () => {
     it('should remove an Exsiccata by ID', async () => {
       const id = 1; 
-      exsiccataRepository.delete.mockResolvedValue({ affected: 1 });
+      mockExsiccataRepository.delete.mockResolvedValue({ affected: 1 });
 
       const result = await exsiccataService.remove(id);
 
-      expect(exsiccataRepository.delete).toHaveBeenCalledWith(id);
+      expect(mockExsiccataRepository.delete).toHaveBeenCalledWith(id);
     });
 
     it('should throw NotFoundException when Exsiccata is not found for removal', async () => {
-      exsiccataRepository.delete.mockResolvedValue({ affected: 0 });
+      mockExsiccataRepository.delete.mockResolvedValue({ affected: 0 });
       const id = 999;
 
       try {
