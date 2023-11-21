@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, UpdateDateColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, UpdateDateColumn, ManyToMany, JoinTable, CannotReflectMethodParameterTypeError } from 'typeorm';
 import { Role } from '../../setup/enums/role.enum';
 import { RoleEntity } from '../../role/entities/role.entity';
 
@@ -37,8 +37,20 @@ export class User {
   @Column({name: 'remember_token', nullable: true})
   rememberToken: string;
 
-  @ManyToMany(() => RoleEntity, { eager: true, cascade: true })
-  @JoinTable()
-  roles: RoleEntity[];
+  @ManyToMany(
+    () => RoleEntity,
+    role => role.users, { eager: true, cascade: true })
+  @JoinTable({
+    name: 'user_roles',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'role_id',
+      referencedColumnName: 'id',
+    },
+  })
+  roles?: RoleEntity[];
 
 }
