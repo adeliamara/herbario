@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExsiccataDto } from './dto/create-exsiccata.dto';
 import { UpdateExsiccataDto } from './dto/update-exsiccata.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Entity, Repository, SelectQueryBuilder } from 'typeorm';
 import { Exsiccata } from './entities/exsiccata.entity';
 import { Family } from 'src/families/entities/family.entity';
 import { FamiliesService } from 'src/families/families.service';
@@ -17,6 +17,7 @@ import { EnvironmentsService } from 'src/environments/environments.service';
 import { BotanistsService } from 'src/botanists/botanists.service';
 import { Botanist } from 'src/botanists/entities/botanist.entity';
 import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
+import { ExsiccataFamily } from '../exsiccata-family/entities/exsiccata-family.entity';
 
 @Injectable()
 export class ExsiccataService {
@@ -37,55 +38,20 @@ export class ExsiccataService {
     const collection_number: number = (await this.findAllByCollectorId(collectorId)).length;
     createExsiccataDto.collectionNumberPerCollector = collection_number + 1;
 
-    let family: Family = await this.familyService.findOne(familyId);
-
-    if (!family) {
-      throw new NotFoundException('Familia')
-    }
-
-    let species: Species = await this.speciesService.findOne(speciesId);
-
-    if (!species) {
-      throw new NotFoundException('Especie')
-    }
-
+    const collectionNumber: number = (await this.findAllByCollectorId(collectorId)).length;
+    createExsiccataDto.collectionNumberPerCollector = collectionNumber + 1;
+  
+    const family: Family = await this.getEntity(this.familyService, familyId, 'Família não encontrada');
+    const species: Species = await this.getEntity(this.speciesService, speciesId, 'Espécie não encontrada');
+    const genus: Genus = await this.getEntity(this.genusService, genusId, 'Gênero não encontrado');
+    const collector: Botanist = await this.getEntity(this.botanistsService, collectorId, 'Coletor não encontrado');
+    const determinator: Botanist = await this.getEntity(this.botanistsService, determinatorId, 'Determinador não encontrado');
+    const location: Location = await this.getEntity(this.locationService, locationId, 'Localização não encontrada');
+    const environment: Environment = await this.getEntity(this.environmentService, environmentId, 'Ambiente não encontrado');
+  
+    const exsiccata: Exsiccata =  this.exsiccataRepository.create(createExsiccataDto);
+   
     createExsiccataDto.scientificName = `${family.name} ${species.name}`;
-
-    let genus: Genus = await this.genusService.findOne(genusId);
-
-    if (!genus) {
-      throw new NotFoundException('Especie')
-    }
-
-    let collector: Botanist = await this.botanistsService.findOne(collectorId);
-
-    if (!collector) {
-      throw new NotFoundException('Coletor')
-    }
-
-    let determinator: Botanist = await this.botanistsService.findOne(determinatorId);
-
-    if (!determinator) {
-      throw new NotFoundException('Determinator')
-    }
-
-    let location: Location = await this.locationService.findOne(locationId);
-
-    if (!location) {
-      throw new NotFoundException('Location')
-    }
-
-    const exsiccata = await this.exsiccataRepository.create(createExsiccataDto);
-
-    if (!exsiccata) {
-      throw new NotFoundException('Exsicata')
-    }
-
-    let environment: Environment = await this.environmentService.findOne(environmentId);
-
-    if (!environment) {
-      throw new NotFoundException('environment')
-    }
 
     exsiccata.families = [family];
     exsiccata.species = [species];
@@ -128,71 +94,71 @@ export class ExsiccataService {
     environmentName?: string;
   }, options: IPaginationOptions): Promise<Pagination<Exsiccata>> {
 
-      const { scientificName, collectionDateStart, collectionDateEnd, commonName, growthHabit, color, familyName, speciesName, genusName, determinatorName, collectorName, environmentName } = filterParams;
-      const queryBuilder = this.exsiccataRepository.createQueryBuilder('exsiccata');
-  
-      queryBuilder.leftJoinAndSelect('exsiccata.families', 'family')
-        .leftJoinAndSelect('exsiccata.species', 'species')
-        .leftJoinAndSelect('exsiccata.genus', 'genus')
-        .leftJoinAndSelect('exsiccata.collector', 'collector') // Alias para o coletor
-        .leftJoinAndSelect('exsiccata.determinator', 'determinator')
-        .leftJoinAndSelect('exsiccata.location', 'location_table')
-  
-      if (scientificName) {
-        queryBuilder.andWhere('exsiccata.scientificName LIKE :scientificName', {
-          scientificName: `%${scientificName}%`,
-        });
-      }
-  
-      if (collectionDateStart && collectionDateEnd) {
-        queryBuilder.andWhere('exsiccata.collectionDate BETWEEN :startDate AND :endDate', {
-          startDate: collectionDateStart,
-          endDate: collectionDateEnd,
-        });
-      }
-  
-      if (commonName) {
-        queryBuilder.andWhere('exsiccata.commonName LIKE :commonName', {
-          commonName: `%${commonName}%`,
-        });
-      }
-  
-      if (growthHabit) {
-        queryBuilder.andWhere('exsiccata.growthHabit LIKE :growthHabit', {
-          growthHabit: `%${growthHabit}%`,
-        });
-      }
-  
-      if (color) {
-        queryBuilder.andWhere('exsiccata.color LIKE :color', {
-          color: `%${color}%`,
-        });
-      }
-  
-      if (familyName) {
-        queryBuilder.andWhere('family.name LIKE :familyName', { familyName: `%${familyName}%` });
-      }
-  
-      if (speciesName) {
-        queryBuilder.andWhere('species.name LIKE :speciesName', { speciesName: `%${speciesName}%` });
-      }
-  
-      if (genusName) {
-        queryBuilder.andWhere('genus.name LIKE :genusName', { genusName: `%${genusName}%` });
-      }  
-      
-      if (collectorName) {
-        queryBuilder.andWhere('collector.name LIKE :collectorName', { collectorName: `%${collectorName}%` });
-      }
-    
-      if (determinatorName) {
-        queryBuilder.andWhere('determinator.name LIKE :determinatorName', { determinatorName: `%${determinatorName}%` });
-      }
-    
-      if (environmentName) {
-        queryBuilder.andWhere('environment.name LIKE :environmentName', { environmentName: `%${environmentName}%` });
-      }    
- 
+    const { scientificName, collectionDateStart, collectionDateEnd, commonName, growthHabit, color, familyName, speciesName, genusName, determinatorName, collectorName, environmentName } = filterParams;
+    const queryBuilder = this.exsiccataRepository.createQueryBuilder('exsiccata');
+
+    queryBuilder.leftJoinAndSelect('exsiccata.families', 'family')
+      .leftJoinAndSelect('exsiccata.species', 'species')
+      .leftJoinAndSelect('exsiccata.genus', 'genus')
+      .leftJoinAndSelect('exsiccata.collector', 'collector') // Alias para o coletor
+      .leftJoinAndSelect('exsiccata.determinator', 'determinator')
+      .leftJoinAndSelect('exsiccata.location', 'location_table')
+
+    if (scientificName) {
+      queryBuilder.andWhere('exsiccata.scientificName LIKE :scientificName', {
+        scientificName: `%${scientificName}%`,
+      });
+    }
+
+    if (collectionDateStart && collectionDateEnd) {
+      queryBuilder.andWhere('exsiccata.collectionDate BETWEEN :startDate AND :endDate', {
+        startDate: collectionDateStart,
+        endDate: collectionDateEnd,
+      });
+    }
+
+    if (commonName) {
+      queryBuilder.andWhere('exsiccata.commonName LIKE :commonName', {
+        commonName: `%${commonName}%`,
+      });
+    }
+
+    if (growthHabit) {
+      queryBuilder.andWhere('exsiccata.growthHabit LIKE :growthHabit', {
+        growthHabit: `%${growthHabit}%`,
+      });
+    }
+
+    if (color) {
+      queryBuilder.andWhere('exsiccata.color LIKE :color', {
+        color: `%${color}%`,
+      });
+    }
+
+    if (familyName) {
+      queryBuilder.andWhere('family.name LIKE :familyName', { familyName: `%${familyName}%` });
+    }
+
+    if (speciesName) {
+      queryBuilder.andWhere('species.name LIKE :speciesName', { speciesName: `%${speciesName}%` });
+    }
+
+    if (genusName) {
+      queryBuilder.andWhere('genus.name LIKE :genusName', { genusName: `%${genusName}%` });
+    }
+
+    if (collectorName) {
+      queryBuilder.andWhere('collector.name LIKE :collectorName', { collectorName: `%${collectorName}%` });
+    }
+
+    if (determinatorName) {
+      queryBuilder.andWhere('determinator.name LIKE :determinatorName', { determinatorName: `%${determinatorName}%` });
+    }
+
+    if (environmentName) {
+      queryBuilder.andWhere('environment.name LIKE :environmentName', { environmentName: `%${environmentName}%` });
+    }
+
     // queryBuilder.where('exsiccata.removed = :removed', { removed: false });
     const paginatedResults = await this.paginate(queryBuilder, options);
 
@@ -218,9 +184,50 @@ export class ExsiccataService {
     return exsiccata;
   }
 
-  update(id: number, updateExsiccataDto: UpdateExsiccataDto) {
-
+  addNewGenusSpecieOrFamily(id: number, updateExsiccataDto: UpdateExsiccataDto) {
     return this.exsiccataRepository.update(id, updateExsiccataDto);
+  }
+
+  async update(id: number, updateExsiccataDto: UpdateExsiccataDto) {
+    const { familyId, speciesId, genusId, collectorId, determinatorId, ...updateExsiccataData } = updateExsiccataDto;
+
+    let exsiccata = await this.findOne(id);
+    if (!exsiccata) {
+      throw new NotFoundException('Exsiccata não encontrado');
+    }
+  
+    const collector = await this.getEntity(this.botanistsService, collectorId, 'Coletor não encontrado');
+    const determinator = await this.getEntity(this.botanistsService, determinatorId, 'Determinador não encontrado');
+  
+    const [family, genus, species] = await Promise.all([
+      this.getEntity(this.familyService, familyId, 'Família não encontrada'),
+      this.getEntity(this.genusService, genusId, 'Gênero não encontrado'),
+      this.getEntity(this.speciesService, speciesId, 'Espécie não encontrada'),
+    ]);
+  
+    const updatedFamilyName = family?.name || (exsiccata.families.slice(-1)[0]?.name) || '';
+    const updatedSpecieName = species?.name || (exsiccata.species.slice(-1)[0]?.name) || '';
+    exsiccata.scientificName = `${updatedFamilyName} ${updatedSpecieName}`;
+  
+    Object.assign(exsiccata, {
+      collector: collector || exsiccata.collector,
+      determinator: determinator || exsiccata.determinator,
+      ...updateExsiccataData,
+    });
+  
+    if (family) {
+      exsiccata.families.push(family);
+    }
+  
+    if (genus) {
+      exsiccata.genus.push(genus);
+    }
+  
+    if (species) {
+      exsiccata.species.push(species);
+    }
+
+    return this.exsiccataRepository.save(exsiccata);
   }
 
   remove(id: number) {
@@ -236,6 +243,20 @@ export class ExsiccataService {
   async paginate(queryBuilder: SelectQueryBuilder<Exsiccata>, options: IPaginationOptions): Promise<Pagination<Exsiccata>> {
     return await paginate(queryBuilder, options);
   }
- 
+
+  async getEntity (service: any, id: number | undefined, notFoundMessage: string) {
+    if (id == undefined) {
+      return undefined;
+    }
+
+    const entity = await service.findOne(id)
+
+    if (!entity) {
+      throw new NotFoundException(notFoundMessage);
+    }
+    
+    return entity;
+  }
+
 
 }
