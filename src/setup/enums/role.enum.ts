@@ -1,8 +1,8 @@
 // role.enum.ts
 export enum Role {
   ADMIN = 'Admin',
-  USER = 'USER',
-  MODERATOR = 'MODERATOR',
+  USER = 'User',
+  MODERATOR = 'Moderator',
 }
 
 // Utilize uma função para mapear os valores do enum para a tabela de roles

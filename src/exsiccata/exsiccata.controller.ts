@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, DefaultValuePipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, DefaultValuePipe, UseGuards, Req } from '@nestjs/common';
 import { ExsiccataService } from './exsiccata.service';
 import { CreateExsiccataDto } from './dto/create-exsiccata.dto';
 import { UpdateExsiccataDto } from './dto/update-exsiccata.dto';
@@ -8,13 +8,18 @@ import {
   Pagination,
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
+import { AuthGuard } from '../setup/guards/auth.guard';
+import { RolesGuard } from '../setup/guards/roles.guard';
+import { Roles } from '../setup/decorators/roles.decorator';
+import { Role } from '../setup/enums/role.enum';
 
 @Controller('exsiccata')
 export class ExsiccataController {
   constructor(private readonly exsiccataService: ExsiccataService) { }
 
-  @Post()
-  create(@Body() createExsiccataDto: CreateExsiccataDto) {
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  async create(@Body() createExsiccataDto: CreateExsiccataDto, @Req() request: Request): Promise<Exsiccata>{
     return this.exsiccataService.create(createExsiccataDto);
   }
 

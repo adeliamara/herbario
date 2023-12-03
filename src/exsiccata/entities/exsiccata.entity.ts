@@ -6,6 +6,7 @@ import { Genus } from "src/genus/entities/genus.entity";
 import { Location } from "src/locations/entities/location.entity";
 import { Species } from "src/species/entities/species.entity";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "../../users/entities/user.entity";
 
 @Entity()
 export class Exsiccata {
@@ -110,4 +111,7 @@ export class Exsiccata {
 
   @ManyToOne(() => Environment, environment => environment.exsiccatas)
   environment: Environment;
+
+  @ManyToOne(() => User, user => user.exsiccatas)
+  user: User;
 }

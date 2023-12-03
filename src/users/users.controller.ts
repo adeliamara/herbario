@@ -66,7 +66,6 @@ export class UsersController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   private UserIsNotAdmin(): boolean {
-    console.log('aqui4')
     return true;
   }
 
