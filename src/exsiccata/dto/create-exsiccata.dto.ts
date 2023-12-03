@@ -12,6 +12,11 @@ export class CreateExsiccataDto {
   @Type(() => Date)
   collectionDate: Date;
 
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  determinationDate: Date;
+
   @IsLatitude()
   latitude: number;
 
@@ -32,7 +37,7 @@ export class CreateExsiccataDto {
   @IsNumber()
   collectorId: number;
 
-  @IsNotEmpty()
+  @IsEmpty()
   collectionNumberPerCollector: number;
 
   @IsNumber()
