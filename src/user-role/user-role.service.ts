@@ -18,7 +18,7 @@ export class UserRoleService {
   ){}
 
   create(userReq: User, createUserRoleDto: CreateUserRoleDto) {
-    const isAdmin = this.roleService.isUserAdmin(userReq);
+    const isAdmin = this.roleService.userHasRolePermission(userReq, Role.ADMIN);
 
     if (!isAdmin) {
       throw new ForbiddenException('Você não tem permissão para adicionar uma nova regra!')
@@ -28,7 +28,7 @@ export class UserRoleService {
   }
 
   findAll(userReq: User) {
-    const isAdmin = this.roleService.isUserAdmin(userReq);
+    const isAdmin = this.roleService.userHasRolePermission(userReq, Role.ADMIN);
 
     if (!isAdmin) {
       throw new ForbiddenException()
@@ -37,7 +37,7 @@ export class UserRoleService {
   }
 
   findOne(userReq: User,roleId: number, userId: number) {
-    const isAdmin = this.roleService.isUserAdmin(userReq);
+    const isAdmin = this.roleService.userHasRolePermission(userReq, Role.ADMIN);
 
     if (!isAdmin) {
       throw new ForbiddenException()
@@ -46,7 +46,7 @@ export class UserRoleService {
   }
 
   remove(userReq: User, roleId: number, userId: number) {
-    const isAdmin = this.roleService.isUserAdmin(userReq);
+    const isAdmin = this.roleService.userHasRolePermission(userReq, Role.ADMIN);
 
     if (!isAdmin) {
       throw new ForbiddenException();

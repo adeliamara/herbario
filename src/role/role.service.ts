@@ -7,8 +7,8 @@ import { Role } from '../setup/enums/role.enum';
 @Injectable()
 export class RoleService {
 
-  isUserAdmin(user: User): boolean {
-    return user?.roles?.some(role => role.name.trim() === Role.ADMIN);
+  userHasRolePermission(user: User, roleExpected: Role): boolean {
+    return user?.roles?.some(role => role.name.trim() === roleExpected);
   }
 
   create(createRoleDto: CreateRoleDto) {
