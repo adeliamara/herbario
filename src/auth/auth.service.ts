@@ -18,8 +18,6 @@ export class AuthService {
       throw new HttpException('Usuário ou senha inválidos', HttpStatus.UNAUTHORIZED);
     }
 
-    console.log(user);
-
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (isPasswordValid) {
