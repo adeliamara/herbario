@@ -18,6 +18,7 @@ import { BotanistsService } from 'src/botanists/botanists.service';
 import { Botanist } from 'src/botanists/entities/botanist.entity';
 import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 import { ExsiccataFamily } from '../exsiccata-family/entities/exsiccata-family.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class ExsiccataService {
@@ -33,7 +34,7 @@ export class ExsiccataService {
     private environmentService: EnvironmentsService
   ) { }
 
-  async create(createExsiccataDto: CreateExsiccataDto) {
+  async create(userReq: User, createExsiccataDto: CreateExsiccataDto) {
     const { familyId, speciesId, collectorId, genusId, environmentId, determinatorId, locationId, ...exsiccataData } = createExsiccataDto;
     const collection_number: number = (await this.findAllByCollectorId(collectorId)).length;
     createExsiccataDto.collectionNumberPerCollector = collection_number + 1;
@@ -60,6 +61,7 @@ export class ExsiccataService {
     exsiccata.determinator = determinator;
     exsiccata.location = location;
     exsiccata.environment = environment;
+    exsiccata.user = userReq;
 
     return this.exsiccataRepository.save(exsiccata);
   }
