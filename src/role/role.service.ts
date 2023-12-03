@@ -3,31 +3,27 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { User } from '../users/entities/user.entity';
 import { Role } from '../setup/enums/role.enum';
+import { InjectRepository } from '@nestjs/typeorm';
+import { RoleEntity } from './entities/role.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class RoleService {
+  constructor(
+    @InjectRepository(RoleEntity)
+    private roleRepository: Repository<RoleEntity>
+  ){}
 
   userHasRolePermission(user: User, roleExpected: Role): boolean {
     return user?.roles?.some(role => role.name.trim() === roleExpected);
   }
 
-  create(createRoleDto: CreateRoleDto) {
-    return 'This action adds a new role';
+  async findAll() {
+    return await this.roleRepository.find()
   }
 
-  findAll() {
-    return `This action returns all role`;
+  async findOne(id: number) {
+    return await this.roleRepository.findOneBy({ id: id })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} role`;
-  }
-
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} role`;
-  }
 }
