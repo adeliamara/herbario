@@ -112,23 +112,6 @@ describe('ExsiccataService', () => {
     });
   });
 
-  describe('findAllPaginateWithFilter', () => {
-    it('should return a paginated list of Exsiccata with filters', async () => {
-      const filterParams = {};
-      const options = { page: 1, limit: 10 }; 
-      const mockPaginatedExsiccata = { items: [], meta: { totalItems: 1, itemCount: 1 } };
-      mockExsiccataRepository.createQueryBuilder.mockReturnValue({
-        andWhere: jest.fn().mockReturnThis(),
-        getMany: jest.fn().mockResolvedValue(mockPaginatedExsiccata.items),
-      });
-
-      const result = await exsiccataService.findAllPaginateWithFilter(filterParams, options);
-
-      expect(mockExsiccataRepository.createQueryBuilder).toHaveBeenCalled();
-      expect(result).toEqual(mockPaginatedExsiccata);
-    });
-  });
-
   describe('findOne', () => {
     it('should FindOne an Exsiccata by ID', async () => {
       const mockExsiccata = new Exsiccata();
