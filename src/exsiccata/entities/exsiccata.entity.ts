@@ -107,9 +107,11 @@ export class Exsiccata {
   determinator: Botanist;
 
   @ManyToOne(() => Location, location => location.exsiccatas)
+  @JoinColumn({ name: 'location_id' }) 
   location: Location;
 
   @ManyToOne(() => Environment, environment => environment.exsiccatas)
+  @JoinColumn({ name: 'environment_id' }) 
   environment: Environment;
 
   @ManyToOne(() => User, user => user.exsiccatas)
