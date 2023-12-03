@@ -1,34 +1,48 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Req } from '@nestjs/common';
 import { UserRoleService } from './user-role.service';
 import { CreateUserRoleDto } from './dto/create-user-role.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
+import { AuthGuard } from '../setup/guards/auth.guard';
+import { RolesGuard } from '../setup/guards/roles.guard';
+import { Role } from '../setup/enums/role.enum';
+import { Roles } from '../setup/decorators/roles.decorator';
+import { User } from '../users/entities/user.entity';
+import { Request } from 'express';
 
 @Controller('user-roles') 
 export class UserRoleController {
   constructor(private readonly userRoleService: UserRoleService) {}
 
   @Post()
-  create(@Body() createUserRoleDto: CreateUserRoleDto) {
-    return this.userRoleService.create(createUserRoleDto);
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  create(@Body() createUserRoleDto: CreateUserRoleDto, @Req() request: Request) {    
+    const userReq:  User = request.user as User;
+    return this.userRoleService.create(userReq, createUserRoleDto);
   }
 
   @Get()
-  findAll() {
-    return this.userRoleService.findAll();
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  findAll(@Req() request: Request) {    
+    const userReq:  User = request.user as User;
+    return this.userRoleService.findAll(userReq);
   }
 
-  @Get(':roleId/:userId')
-  findOne(@Param('roleId') roleId: number, @Param('userId') userId: number) {
-    return this.userRoleService.findOne(roleId, userId);
+  @Get(':userId/:roleId')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  findOne(@Param('roleId') roleId: number, @Param('userId') userId: number, @Req() request: Request) {    
+    const userReq:  User = request.user as User;
+    return this.userRoleService.findOne(userReq, roleId, userId);
   }
 
-  @Put(':roleId/:userId')
-  update(@Param('roleId') roleId: number, @Param('userId') userId: number, @Body() updateUserRoleDto: UpdateUserRoleDto) {
-    return this.userRoleService.update(roleId, userId, updateUserRoleDto);
-  }
+  @Delete(':userId/:roleId')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  remove(@Param('roleId') roleId: number, @Param('userId') userId: number, @Req() request: Request) {    
+    const userReq:  User = request.user as User;
 
-  @Delete(':roleId/:userId')
-  remove(@Param('roleId') roleId: number, @Param('userId') userId: number) {
-    return this.userRoleService.remove(roleId, userId);
+    return this.userRoleService.remove(userReq, roleId, userId);
   }
 }
