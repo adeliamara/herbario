@@ -12,15 +12,19 @@ import { AuthGuard } from '../setup/guards/auth.guard';
 import { RolesGuard } from '../setup/guards/roles.guard';
 import { Roles } from '../setup/decorators/roles.decorator';
 import { Role } from '../setup/enums/role.enum';
+import { User } from '../users/entities/user.entity';
+import { Request } from 'express';
 
 @Controller('exsiccata')
 export class ExsiccataController {
   constructor(private readonly exsiccataService: ExsiccataService) { }
 
+  @Post()
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
-  async create(@Body() createExsiccataDto: CreateExsiccataDto, @Req() request: Request): Promise<Exsiccata>{
-    return this.exsiccataService.create(createExsiccataDto);
+  @Roles(Role.USER)
+  async create(@Body() createExsiccataDto: CreateExsiccataDto, @Req() request: Request): Promise<Exsiccata> {
+    const userReq: User = request.user as User;
+    return this.exsiccataService.create(userReq, createExsiccataDto);
   }
 
   @Get()
@@ -63,10 +67,9 @@ export class ExsiccataController {
       environmentName
     };
 
-    return this.exsiccataService.findAllPaginateWithFilter(filterOptions,options);
+    return this.exsiccataService.findAllPaginateWithFilter(filterOptions, options);
 
   }
-
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
@@ -74,11 +77,15 @@ export class ExsiccataController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.USER)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateExsiccataDto: UpdateExsiccataDto) {
     return this.exsiccataService.update(+id, updateExsiccataDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.USER)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.exsiccataService.remove(+id);
   }

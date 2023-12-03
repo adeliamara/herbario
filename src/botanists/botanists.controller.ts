@@ -12,30 +12,36 @@ export class BotanistsController {
   constructor(private readonly botanistsService: BotanistsService) { }
 
   @Post()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.USER)
   create(@Body() createBotanistDto: CreateBotanistDto) {
     return this.botanistsService.create(createBotanistDto);
   }
 
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.USER)
   findAll() {
     return this.botanistsService.findAll();
   }
 
-
-  @UseGuards(AuthGuard)
   @Get(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.USER)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.botanistsService.findOne(+id);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.USER)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateBotanistDto: UpdateBotanistDto) {
     return this.botanistsService.update(+id, updateBotanistDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.USER)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.botanistsService.remove(+id);
   }

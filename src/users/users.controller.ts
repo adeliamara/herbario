@@ -27,7 +27,7 @@ export class UsersController {
   @Roles(Role.ADMIN)
   async findAll() {
     const users: User[] = await this.usersService.findAll();
-    
+
     const safeResponse = users.map(user => ({
       id: user.id,
       email: user.email,
@@ -41,13 +41,14 @@ export class UsersController {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
-  async findOne(@Param('id') id: string, @Req() request: Request) {    
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  async findOne(@Param('id') id: string, @Req() request: Request) {
     const userReq: User = request.user as User;
 
     if (this.userIdIsDifferent(userReq, +id) && this.UserIsNotAdmin()) {
       throw new ForbiddenException();
-    } 
+    }
 
     const user: User = await this.usersService.findOne(Number(id), userReq);
 
@@ -62,6 +63,7 @@ export class UsersController {
 
     return safeResponse;
   }
+
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
