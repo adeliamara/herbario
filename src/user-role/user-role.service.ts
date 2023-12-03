@@ -8,6 +8,7 @@ import { User } from '../users/entities/user.entity';
 import { Role } from '../setup/enums/role.enum';
 import { RoleEntity } from '../role/entities/role.entity';
 import { RoleService } from '../role/role.service';
+import { createTracing } from 'trace_events';
 
 @Injectable()
 export class UserRoleService {
@@ -17,13 +18,21 @@ export class UserRoleService {
     private readonly roleService: RoleService
   ){}
 
-  create(userReq: User, createUserRoleDto: CreateUserRoleDto) {
+  async create(userReq: User, createUserRoleDto: CreateUserRoleDto) {
     const isAdmin = this.roleService.userHasRolePermission(userReq, Role.ADMIN);
 
     if (!isAdmin) {
       throw new ForbiddenException('Você não tem permissão para adicionar uma nova regra!')
     }
-    const userRole = this.userRoleRepository.create(createUserRoleDto);
+
+    const role: RoleEntity = await this.roleService.findOne(createUserRoleDto.roleId);
+
+    let userRole: UserRole[] = [];
+    if (role.name.trim() == "Admin"){
+      userRole.push(this.userRoleRepository.create({userId: createUserRoleDto.userId, roleId: 3})); //colocar também como user
+    } 
+    userRole.push(this.userRoleRepository.create(createUserRoleDto));
+  
     return this.userRoleRepository.save(userRole);
   }
 
