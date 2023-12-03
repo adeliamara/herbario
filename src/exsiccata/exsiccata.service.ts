@@ -41,7 +41,7 @@ export class ExsiccataService {
 
     const collectionNumber: number = (await this.findAllByCollectorId(collectorId)).length;
     createExsiccataDto.collectionNumberPerCollector = collectionNumber + 1;
-  
+
     const family: Family = await this.getEntity(this.familyService, familyId, 'Família não encontrada');
     const species: Species = await this.getEntity(this.speciesService, speciesId, 'Espécie não encontrada');
     const genus: Genus = await this.getEntity(this.genusService, genusId, 'Gênero não encontrado');
@@ -49,9 +49,9 @@ export class ExsiccataService {
     const determinator: Botanist = await this.getEntity(this.botanistsService, determinatorId, 'Determinador não encontrado');
     const location: Location = await this.getEntity(this.locationService, locationId, 'Localização não encontrada');
     const environment: Environment = await this.getEntity(this.environmentService, environmentId, 'Ambiente não encontrado');
-  
-    const exsiccata: Exsiccata =  this.exsiccataRepository.create(createExsiccataDto);
-   
+
+    const exsiccata: Exsiccata = this.exsiccataRepository.create(createExsiccataDto);
+
     createExsiccataDto.scientificName = `${family.name} ${species.name}`;
 
     exsiccata.families = [family];
@@ -72,8 +72,10 @@ export class ExsiccataService {
       .leftJoinAndSelect('exsiccata.families', 'family')
       .leftJoinAndSelect('exsiccata.species', 'species')
       .leftJoinAndSelect('exsiccata.genus', 'genus')
-      .leftJoinAndSelect('exsiccata.collector', 'collector') // Alias para o coletor
-      .leftJoinAndSelect('exsiccata.determinator', 'determinator')
+      .leftJoin('exsiccata.collector', 'collector')
+      .addSelect(['collector.name'])
+      .leftJoin('exsiccata.determinator', 'determinator') 
+      .addSelect(['determinator.name']) 
       .leftJoinAndSelect('exsiccata.location', 'location_table')
       .getMany();
 
@@ -102,8 +104,10 @@ export class ExsiccataService {
     queryBuilder.leftJoinAndSelect('exsiccata.families', 'family')
       .leftJoinAndSelect('exsiccata.species', 'species')
       .leftJoinAndSelect('exsiccata.genus', 'genus')
-      .leftJoinAndSelect('exsiccata.collector', 'collector') // Alias para o coletor
-      .leftJoinAndSelect('exsiccata.determinator', 'determinator')
+      .leftJoin('exsiccata.collector', 'collector')
+      .addSelect(['collector.name'])
+      .leftJoin('exsiccata.determinator', 'determinator') 
+      .addSelect(['determinator.name']) 
       .leftJoinAndSelect('exsiccata.location', 'location_table')
 
     if (scientificName) {
@@ -173,11 +177,17 @@ export class ExsiccataService {
       .leftJoinAndSelect('exsiccata.families', 'family')
       .leftJoinAndSelect('exsiccata.species', 'species')
       .leftJoinAndSelect('exsiccata.genus', 'genus')
-      .leftJoinAndSelect('exsiccata.collector', 'collector') // Alias para o coletor
-      .leftJoinAndSelect('exsiccata.determinator', 'determinator')
+      .leftJoin('exsiccata.collector', 'collector')
+      .addSelect(['collector.name'])
+      .leftJoin('exsiccata.determinator', 'determinator') 
+      .addSelect(['determinator.name']) 
       .leftJoinAndSelect('exsiccata.location', 'location_table')
       .where('exsiccata.id = :id', { id })
       .getOne();
+
+    if (!exsiccata) {
+      throw new NotFoundException(`Exsicata com ID ${id} não encontrada`);
+    }
 
     if (!exsiccata) {
       throw new NotFoundException(`Exsicata com ID ${id} não encontrada`);
@@ -197,34 +207,34 @@ export class ExsiccataService {
     if (!exsiccata) {
       throw new NotFoundException('Exsiccata não encontrado');
     }
-  
+
     const collector = await this.getEntity(this.botanistsService, collectorId, 'Coletor não encontrado');
     const determinator = await this.getEntity(this.botanistsService, determinatorId, 'Determinador não encontrado');
-  
+
     const [family, genus, species] = await Promise.all([
       this.getEntity(this.familyService, familyId, 'Família não encontrada'),
       this.getEntity(this.genusService, genusId, 'Gênero não encontrado'),
       this.getEntity(this.speciesService, speciesId, 'Espécie não encontrada'),
     ]);
-  
+
     const updatedFamilyName = family?.name || (exsiccata.families.slice(-1)[0]?.name) || '';
     const updatedSpecieName = species?.name || (exsiccata.species.slice(-1)[0]?.name) || '';
     exsiccata.scientificName = `${updatedFamilyName} ${updatedSpecieName}`;
-  
+
     Object.assign(exsiccata, {
       collector: collector || exsiccata.collector,
       determinator: determinator || exsiccata.determinator,
       ...updateExsiccataData,
     });
-  
+
     if (family) {
       exsiccata.families.push(family);
     }
-  
+
     if (genus) {
       exsiccata.genus.push(genus);
     }
-  
+
     if (species) {
       exsiccata.species.push(species);
     }
@@ -246,7 +256,7 @@ export class ExsiccataService {
     return await paginate(queryBuilder, options);
   }
 
-  async getEntity (service: any, id: number | undefined, notFoundMessage: string) {
+  async getEntity(service: any, id: number | undefined, notFoundMessage: string) {
     if (id == undefined) {
       return undefined;
     }
@@ -256,7 +266,7 @@ export class ExsiccataService {
     if (!entity) {
       throw new NotFoundException(notFoundMessage);
     }
-    
+
     return entity;
   }
 
