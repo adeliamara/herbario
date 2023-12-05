@@ -127,7 +127,7 @@ export class ExsiccataService {
       .leftJoinAndSelect('exsiccata.location', 'location_table')
 
     if (scientificName) {
-      queryBuilder.andWhere('exsiccata.scientificName LIKE :scientificName', {
+      queryBuilder.andWhere('exsiccata.scientificName ILIKE :scientificName', {
         scientificName: `%${scientificName}%`,
       });
     }
@@ -140,45 +140,45 @@ export class ExsiccataService {
     }
 
     if (commonName) {
-      queryBuilder.andWhere('exsiccata.commonName LIKE :commonName', {
+      queryBuilder.andWhere('exsiccata.commonName ILIKE :commonName', {
         commonName: `%${commonName}%`,
       });
     }
 
     if (growthHabit) {
-      queryBuilder.andWhere('exsiccata.growthHabit LIKE :growthHabit', {
+      queryBuilder.andWhere('exsiccata.growthHabit ILIKE :growthHabit', {
         growthHabit: `%${growthHabit}%`,
       });
     }
 
     if (color) {
-      queryBuilder.andWhere('exsiccata.color LIKE :color', {
+      queryBuilder.andWhere('exsiccata.color ILIKE :color', {
         color: `%${color}%`,
       });
     }
 
     if (familyName) {
-      queryBuilder.andWhere('family.name LIKE :familyName', { familyName: `%${familyName}%` });
+      queryBuilder.andWhere('family.name ILIKE :familyName', { familyName: `%${familyName}%` });
     }
 
     if (speciesName) {
-      queryBuilder.andWhere('species.name LIKE :speciesName', { speciesName: `%${speciesName}%` });
+      queryBuilder.andWhere('species.name ILIKE :speciesName', { speciesName: `%${speciesName}%` });
     }
 
     if (genusName) {
-      queryBuilder.andWhere('genus.name LIKE :genusName', { genusName: `%${genusName}%` });
+      queryBuilder.andWhere('genus.name ILIKE :genusName', { genusName: `%${genusName}%` });
     }
 
     if (collectorName) {
-      queryBuilder.andWhere('collector.name LIKE :collectorName', { collectorName: `%${collectorName}%` });
+      queryBuilder.andWhere('collector.name ILIKE :collectorName', { collectorName: `%${collectorName}%` });
     }
 
     if (determinatorName) {
-      queryBuilder.andWhere('determinator.name LIKE :determinatorName', { determinatorName: `%${determinatorName}%` });
+      queryBuilder.andWhere('determinator.name ILIKE :determinatorName', { determinatorName: `%${determinatorName}%` });
     }
 
     if (environmentName) {
-      queryBuilder.andWhere('environment.name LIKE :environmentName', { environmentName: `%${environmentName}%` });
+      queryBuilder.andWhere('environment.name ILIKE :environmentName', { environmentName: `%${environmentName}%` });
     }
 
     // queryBuilder.where('exsiccata.removed = :removed', { removed: false });
