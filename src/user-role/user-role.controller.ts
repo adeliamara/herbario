@@ -20,15 +20,7 @@ export class UserRoleController {
     const userReq:  User = request.user as User;
     return this.userRoleService.create(userReq, createUserRoleDto);
   }
-
-  @Get()
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
-  findAll(@Req() request: Request) {    
-    const userReq:  User = request.user as User;
-    return this.userRoleService.findAll(userReq);
-  }
-
+  
   @Get(':userId/:roleId')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
@@ -44,5 +36,21 @@ export class UserRoleController {
     const userReq:  User = request.user as User;
 
     return this.userRoleService.remove(userReq, roleId, userId);
+  }
+
+  @Get(':userId')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  findAllByUser(@Param('userId') userId: number, @Req() request: Request) {    
+    const userReq:  User = request.user as User;
+    return this.userRoleService.findAllByUser(userReq, userId);
+  }
+
+  @Get()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.USER)
+  findAllMyUser(@Req() request: Request) {    
+    const userReq:  User = request.user as User;
+    return this.userRoleService.findAllMyUser(userReq);
   }
 }

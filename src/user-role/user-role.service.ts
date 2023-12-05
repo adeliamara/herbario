@@ -45,6 +45,19 @@ export class UserRoleService {
     return this.userRoleRepository.find();
   }
 
+  findAllMyUser(userReq: User) {
+    return this.userRoleRepository.findBy({userId: userReq.id});
+  }
+
+  findAllByUser(userReq: User, userId: number) {
+    const isAdmin = this.roleService.userHasRolePermission(userReq, Role.ADMIN);
+
+    if (!isAdmin) {
+      throw new ForbiddenException()
+    }
+    return this.userRoleRepository.findBy({userId});
+  }
+
   findOne(userReq: User,roleId: number, userId: number) {
     const isAdmin = this.roleService.userHasRolePermission(userReq, Role.ADMIN);
 
