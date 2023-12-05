@@ -36,3 +36,4 @@ lerna-debug.log*
 
 .env
 /src/auth/auth.constants.ts
+/src/ormconfig.ts
