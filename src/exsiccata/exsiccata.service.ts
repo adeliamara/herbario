@@ -82,6 +82,22 @@ export class ExsiccataService {
     return exsiccatas || [];
   }
 
+  async findByIds(ids: number[]): Promise<Exsiccata[]> {
+    const exsiccatas = await this.exsiccataRepository
+      .createQueryBuilder('exsiccata')
+      .leftJoinAndSelect('exsiccata.families', 'family')
+      .leftJoinAndSelect('exsiccata.species', 'species')
+      .leftJoinAndSelect('exsiccata.genus', 'genus')
+      .leftJoin('exsiccata.collector', 'collector')
+      .addSelect(['collector.name'])
+      .leftJoin('exsiccata.determinator', 'determinator')
+      .addSelect(['determinator.name'])
+      .leftJoinAndSelect('exsiccata.location', 'location_table')
+      .whereInIds(ids)  // Usamos o método whereInIds para filtrar por IDs
+      .getMany();
+  
+    return exsiccatas || [];
+  }  
 
   async findAllPaginateWithFilter(filterParams: {
     scientificName?: string;
