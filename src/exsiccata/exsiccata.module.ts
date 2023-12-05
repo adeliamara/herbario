@@ -17,7 +17,7 @@ import { BotanistsService } from 'src/botanists/botanists.service';
 import { Botanist } from 'src/botanists/entities/botanist.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Exsiccata,Family, Species, Genus, Botanist, Location, Environment])],
+  imports: [TypeOrmModule.forFeature([Exsiccata, Family, Species, Genus, Botanist, Location, Environment])],
   controllers: [ExsiccataController],
   providers: [ExsiccataService,FamiliesService, GenusService, BotanistsService, LocationsService, SpeciesService, EnvironmentsService],
   exports: [ExsiccataService]

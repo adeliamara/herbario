@@ -22,11 +22,12 @@ import { ConfigModule } from '@nestjs/config';
 import { RolesGuard } from './setup/guards/roles.guard';
 import { RoleModule } from './role/role.module';
 import { UserRoleModule } from './user-role/user-role.module';
+import { PrintsModule } from './prints/prints.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,
-  }), ConfigModule.forRoot( {envFilePath: '.env'}), TypeOrmModule.forRoot(config), FamiliesModule, SpeciesModule, GenusModule, EnvironmentsModule, BotanistsModule, LocationsModule, ExsiccataModule, ExsiccataFamilyModule, ExsiccataSpeciesModule, ExsiccataGenusModule, AuthModule, UsersModule, RoleModule, UserRoleModule],
+  }), ConfigModule.forRoot( {envFilePath: '.env'}), TypeOrmModule.forRoot(config), FamiliesModule, SpeciesModule, GenusModule, EnvironmentsModule, BotanistsModule, LocationsModule, ExsiccataModule, ExsiccataFamilyModule, ExsiccataSpeciesModule, ExsiccataGenusModule, AuthModule, UsersModule, RoleModule, UserRoleModule, PrintsModule],
   controllers: [AppController],
   providers: [AppService,    {
     provide: APP_PIPE,
