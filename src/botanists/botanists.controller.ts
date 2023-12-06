@@ -45,4 +45,11 @@ export class BotanistsController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.botanistsService.remove(+id);
   }
+
+  @Post(':id/restore') 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.USER)
+  restore(@Param('id') id: string) {
+    return this.botanistsService.restore(+id);
+  }
 }
