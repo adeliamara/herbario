@@ -1,5 +1,5 @@
 import { Exsiccata } from 'src/exsiccata/entities/exsiccata.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne, OneToMany, DeleteDateColumn } from 'typeorm';
 
 @Entity()
 export class Botanist {
@@ -20,6 +20,9 @@ export class Botanist {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP', name: 'updated_at'  })
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 
   @OneToMany(() => Exsiccata, exsiccata => exsiccata.collector)
   collectedExsiccatas: Exsiccata[];

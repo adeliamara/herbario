@@ -205,10 +205,6 @@ export class ExsiccataService {
       throw new NotFoundException(`Exsicata com ID ${id} não encontrada`);
     }
 
-    if (!exsiccata) {
-      throw new NotFoundException(`Exsicata com ID ${id} não encontrada`);
-    }
-
     return exsiccata;
   }
 
@@ -379,4 +375,26 @@ export class ExsiccataService {
 
     return count;
   }
+
+  async restore(id: number): Promise<Exsiccata> {
+    const exsicata: Exsiccata = await this.findOneWithDeleted(id);
+
+    if (!exsicata) {
+      throw new NotFoundException(`Exsiccata with ID ${id} not found`);
+    }
+
+    exsicata.restore();
+
+    return this.exsiccataRepository.save(exsicata);
+  }
+
+  async findOneWithDeleted(id: number) {
+    return await this.exsiccataRepository
+      .createQueryBuilder('exsiccata')
+      .where('exsiccata.id = :id', { id })
+      .orWhere('exsiccata.deletedAt IS NOT NULL')
+      .withDeleted()
+      .getOne();
+  }
+
 }

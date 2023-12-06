@@ -20,7 +20,6 @@ export class ExsiccataGenusService {
     return `This action updates a #${id} exsiccataGenu`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} exsiccataGenu`;
-  }
+ 
+
 }

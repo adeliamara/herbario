@@ -41,4 +41,11 @@ export class FamiliesController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.familiesService.remove(+id);
   }
+
+  @Post(':id/restore') 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.USER)
+  restore(@Param('id') id: string) {
+    return this.familiesService.restore(+id);
+  }
 }

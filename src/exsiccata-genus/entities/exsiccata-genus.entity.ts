@@ -1,6 +1,6 @@
 import { Exsiccata } from "src/exsiccata/entities/exsiccata.entity";
 import { Genus } from "src/genus/entities/genus.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('exsiccata_genus')
 export class ExsiccataGenus {
@@ -15,6 +15,9 @@ export class ExsiccataGenus {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP', name: 'updated_at'  })
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 
   @ManyToOne(
     () => Exsiccata,

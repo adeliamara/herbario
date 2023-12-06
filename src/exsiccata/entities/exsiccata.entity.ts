@@ -7,19 +7,20 @@ import { Location } from "src/locations/entities/location.entity";
 import { Species } from "src/species/entities/species.entity";
 import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { User } from "../../users/entities/user.entity";
+import { SoftRemovableEntity } from "../../setup/interfaces/SoftRemovableEntity";
 
 @Entity()
-export class Exsiccata {
+export class Exsiccata implements SoftRemovableEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ type: 'varchar', length: 255, name: 'scientific_name', nullable: true})
+  @Column({ type: 'varchar', length: 255, name: 'scientific_name', nullable: true })
   scientificName: string;
 
   @Column({ type: 'timestamp', name: 'collection_date' })
   collectionDate: Date;
 
-  @Column({ type: 'int'})
+  @Column({ type: 'int' })
   collectionNumberPerCollector: number;
 
   @Column({ type: 'varchar', length: 100, name: 'common_name', nullable: true })
@@ -27,14 +28,14 @@ export class Exsiccata {
 
   @Column({ type: 'varchar', length: 100, name: 'growth_habit', nullable: true })
   growthHabit: string;
-  
-  @Column({ type: 'varchar', length: 100})
+
+  @Column({ type: 'varchar', length: 100 })
   color: string;
 
-  @Column({type: 'float'})
+  @Column({ type: 'float' })
   latitude: number;
 
-  @Column({type: 'float'})
+  @Column({ type: 'float' })
   longitude: number;
 
   @Column({ type: 'varchar', length: 255, name: 'location_description', nullable: true })
@@ -99,25 +100,25 @@ export class Exsiccata {
   genus?: Genus[];
 
   @ManyToOne(() => Botanist, collector => collector.collectedExsiccatas)
-  @JoinColumn({ name: 'collector_id' }) 
+  @JoinColumn({ name: 'collector_id' })
   collector: Botanist;
-  
+
   @ManyToOne(() => Botanist, determinator => determinator.determinedExsiccatas, { nullable: true })
-  @JoinColumn({ name: 'determinator_id' }) 
+  @JoinColumn({ name: 'determinator_id' })
   determinator: Botanist;
 
   @ManyToOne(() => Location, location => location.exsiccatas)
-  @JoinColumn({ name: 'location_id' }) 
+  @JoinColumn({ name: 'location_id' })
   location: Location;
 
   @ManyToOne(() => Environment, environment => environment.exsiccatas)
-  @JoinColumn({ name: 'environment_id' }) 
+  @JoinColumn({ name: 'environment_id' })
   environment: Environment;
 
   @ManyToOne(() => User, user => user.exsiccatas)
   user: User;
 
-  @Column({ type: 'date', nullable: true, name: 'determination_date'})
+  @Column({ type: 'date', nullable: true, name: 'determination_date' })
   determinationDate: Date | null;
 
   @BeforeUpdate()
@@ -125,5 +126,9 @@ export class Exsiccata {
     if (this.determinator) {
       this.determinationDate = new Date();
     }
+  }
+
+  restore(): void {
+    this.deletedAt = null;
   }
 }

@@ -1,6 +1,6 @@
 import { IsNotEmpty } from "class-validator";
 import { Exsiccata } from "src/exsiccata/entities/exsiccata.entity";
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Environment {
@@ -15,6 +15,9 @@ export class Environment {
 
     @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
     updatedAt: Date;
+
+    @DeleteDateColumn()
+    deletedAt?: Date;
 
     @OneToMany(() => Exsiccata, (exsiccata) => exsiccata.environment)
     exsiccatas: Exsiccata[];

@@ -38,7 +38,9 @@ export class BotanistsService {
     return this.botanistRepository.update(id, dataToSave);
   }
 
-  remove(id: number) {
-    return this.botanistRepository.delete(id);
+  async remove(id: number) {
+    const botanist: Botanist = await this.findOne(id)
+    return this.botanistRepository.softRemove(botanist);
   }
+
 }

@@ -128,4 +128,11 @@ export class ExsiccataController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.exsiccataService.remove(+id);
   }
+
+  @Post(':id/restore') 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.USER)
+  restore(@Param('id') id: string) {
+    return this.exsiccataService.restore(+id);
+  }
 }

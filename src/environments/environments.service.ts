@@ -35,7 +35,9 @@ export class EnvironmentsService {
     return this.environmentRepository.update(id, dataToSave);
   }
 
-  remove(id: number) {
-    return this.environmentRepository.delete(id);
+  async remove(id: number) {
+    const environment: Environment = await this.findOne(id)
+    return this.environmentRepository.softRemove(environment);
   }
+
 }

@@ -35,10 +35,10 @@ export class ExsiccataGenusController {
     return this.exsiccataGenusService.update(+id, updateExsiccataGenuDto);
   }
 
-  @Delete(':id')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.USER)
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.exsiccataGenusService.remove(+id);
-  }
+  // @Delete(':id')
+  // @UseGuards(AuthGuard, RolesGuard)
+  // @Roles(Role.USER)
+  // remove(@Param('id', ParseIntPipe) id: number) {
+  //   return this.exsiccataGenusService.remove(+id);
+  // }
 }

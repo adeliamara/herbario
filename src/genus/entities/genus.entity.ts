@@ -1,8 +1,9 @@
 import { Exsiccata } from 'src/exsiccata/entities/exsiccata.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne, OneToMany, DeleteDateColumn } from 'typeorm';
+import { SoftRemovableEntity } from '../../setup/interfaces/SoftRemovableEntity';
 
 @Entity()
-export class Genus {  
+export class Genus  implements SoftRemovableEntity {  
 @PrimaryGeneratedColumn('increment')
 id: number;
 
@@ -15,6 +16,13 @@ createdAt: Date;
 @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP', name: 'updated_at',   readonly: true})
 updatedAt: Date;
 
-@ManyToMany(() => Exsiccata, exsiccata => exsiccata.families)
+@DeleteDateColumn()
+deletedAt?: Date;
+
+@ManyToMany(() => Exsiccata, exsiccata => exsiccata.genus)
 exsiccatas?: Exsiccata[];
+
+restore(): void {
+    this.deletedAt = null;
+}
 }

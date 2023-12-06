@@ -41,4 +41,11 @@ export class GenusController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.genusService.remove(+id);
   }
+
+  @Post(':id/restore') 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.USER)
+  restore(@Param('id') id: string) {
+    return this.genusService.restore(+id);
+  }
 }
