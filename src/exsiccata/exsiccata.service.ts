@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExsiccataDto } from './dto/create-exsiccata.dto';
 import { UpdateExsiccataDto } from './dto/update-exsiccata.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Entity, Repository, SelectQueryBuilder } from 'typeorm';
+import { Entity, IsNull, Not, Repository, SelectQueryBuilder } from 'typeorm';
 import { Exsiccata } from './entities/exsiccata.entity';
 import { Family } from 'src/families/entities/family.entity';
 import { FamiliesService } from 'src/families/families.service';
@@ -258,8 +258,9 @@ export class ExsiccataService {
     return this.exsiccataRepository.save(exsiccata);
   }
 
-  remove(id: number) {
-    return this.exsiccataRepository.delete(id);
+  async remove(id: number) {
+    const exsiccata: Exsiccata = await this.findOne(id)
+    return this.exsiccataRepository.softRemove(exsiccata);
   }
 
   async findAllByCollectorId(collectorId: number) {
@@ -272,7 +273,7 @@ export class ExsiccataService {
     return await paginate(queryBuilder, options);
   }
 
-  async getEntity(service: any, id: number | undefined, notFoundMessage: string) {
+  private async getEntity(service: any, id: number | undefined, notFoundMessage: string) {
     if (id == undefined) {
       return undefined;
     }
@@ -286,5 +287,19 @@ export class ExsiccataService {
     return entity;
   }
 
+  async count(){
+    return await this.exsiccataRepository.count();
+  }
+
+  async getSoftDeleted() {
+    const softDeletedExsiccata = await this.exsiccataRepository.find({
+      where: {
+        deletedAt: Not(IsNull()), 
+      },
+      withDeleted: true,
+    });
+
+    return softDeletedExsiccata;
+  }
 
 }

@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, UpdateDateColumn, ManyToMany, JoinTable, CannotReflectMethodParameterTypeError, JoinColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, UpdateDateColumn, ManyToMany, JoinTable, CannotReflectMethodParameterTypeError, JoinColumn, DeleteDateColumn } from 'typeorm';
 import { Role } from '../../setup/enums/role.enum';
 import { RoleEntity } from '../../role/entities/role.entity';
 import { Exsiccata } from '../../exsiccata/entities/exsiccata.entity';
@@ -60,4 +60,7 @@ export class User {
   )
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
   exsiccatas: Exsiccata[];
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }

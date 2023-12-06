@@ -5,7 +5,7 @@ import { Family } from "src/families/entities/family.entity";
 import { Genus } from "src/genus/entities/genus.entity";
 import { Location } from "src/locations/entities/location.entity";
 import { Species } from "src/species/entities/species.entity";
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "../../users/entities/user.entity";
 
 @Entity()
@@ -40,15 +40,15 @@ export class Exsiccata {
   @Column({ type: 'varchar', length: 255, name: 'location_description', nullable: true })
   locationDescription: string;
 
-  @Column({ type: 'timestamp', name: 'deleted_at', nullable: true })
-  deletedAt: Date;
-
   @IsEmpty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
   createdAt: Date;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP', name: 'updated_at' })
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 
   @ManyToMany(
     () => Family,

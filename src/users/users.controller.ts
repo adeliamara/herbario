@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, ForbiddenException, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, ForbiddenException, UseInterceptors, ClassSerializerInterceptor, ParseIntPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
@@ -40,17 +40,31 @@ export class UsersController {
     return safeResponse;
   }
 
+  @Get('soft-deleted')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  async getSoftDeleted() {
+    const softDeletedUser = await this.usersService.getSoftDeleted();
+    return softDeletedUser;
+  }
+
+  @Get('count')
+  count(){
+    return this.usersService.count();
+  }
+
   @Get(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   async findOne(@Param('id') id: string, @Req() request: Request) {
+
     const userReq: User = request.user as User;
 
     if (this.userIdIsDifferent(userReq, +id) && this.UserIsNotAdmin()) {
       throw new ForbiddenException();
     }
 
-    const user: User = await this.usersService.findOne(Number(id), userReq);
+    const user: User = await this.usersService.findOne(userReq, +id);
 
     const safeResponse: any = {
       id: user.id,
@@ -64,6 +78,15 @@ export class UsersController {
     return safeResponse;
   }
 
+  @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.USER)
+  remove(@Param('id', ParseIntPipe) id: number, @Req() request: Request) {
+    const userReq: User = request.user as User;
+
+    return this.usersService.remove(userReq, +id);
+  }
+
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
@@ -74,4 +97,5 @@ export class UsersController {
   private userIdIsDifferent(user: User, id: number): boolean {
     return user.id === id;
   }
+  
 }

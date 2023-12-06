@@ -1,11 +1,13 @@
-import { ForbiddenException, Injectable, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import { ForbiddenException, Injectable, BadRequestException, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { Pagination, IPaginationOptions,paginate } from 'nestjs-typeorm-paginate';
 import * as bcrypt from 'bcrypt';
+import { RoleService } from '../role/role.service';
+import { Role } from '../setup/enums/role.enum';
 
 
 @Injectable()
@@ -14,6 +16,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private readonly roleService: RoleService
+
   ){}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -36,8 +40,23 @@ export class UsersService {
    return await this.userRepository.findOneBy({email: email}) ; 
   }
 
-  async findOne(id: number, user: User) {
-    return await this.userRepository.findOneBy({id: id});
+  async findOne(userReq: User, id: number) {
+
+    if (userReq.id != id) {
+      const isAdmin = this.roleService.userHasRolePermission(userReq, Role.ADMIN);
+
+      if (!isAdmin){
+        throw new ForbiddenException();
+      }
+
+    }
+    const result: User = await this.userRepository.findOneBy({id: id});
+
+    if (!result) {
+      throw new NotFoundException(`User with ID ${id} not found.`);
+    }
+
+    return result;
   }
 
   private isPasswordSecure(password: string): boolean {
@@ -59,5 +78,25 @@ export class UsersService {
       hasUppercase &&
       hasNumber
     );
+  }
+
+  async remove(userReq: User, id: number) {
+    const user: User = await this.findOne(userReq, id)
+    return this.userRepository.softRemove(user);
+  }
+
+  async count(){
+    return await this.userRepository.count();
+  }
+
+  async getSoftDeleted() {
+    const softDeletedExsiccata = await this.userRepository.find({
+      where: {
+        deletedAt: Not(IsNull()), 
+      },
+      withDeleted: true,
+    });
+
+    return softDeletedExsiccata;
   }
 }

@@ -71,6 +71,19 @@ export class ExsiccataController {
 
   }
 
+  @Get('soft-deleted')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  async getSoftDeletedExsiccata() {
+    const softDeletedExsiccata = await this.exsiccataService.getSoftDeleted();
+    return softDeletedExsiccata;
+  }
+  
+  @Get('count')
+  count(){
+    return this.exsiccataService.count();
+  }
+
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.exsiccataService.findOne(+id);
