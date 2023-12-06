@@ -84,6 +84,32 @@ export class ExsiccataController {
     return this.exsiccataService.count();
   }
 
+  @Get('count/created-per-time-unit')
+  countCreatedPerTimeUnit(
+    @Query('groupBy') groupBy: 'month' | 'year' | 'day',
+    @Query('unitsAgo') unitsAgo: number = 1,
+  ) {
+    return this.exsiccataService.countExsiccataCreatedPerTimeUnit(groupBy, unitsAgo);
+  }
+
+  @Get('count/deleted-per-time-unit')
+  countDeletedPerTimeUnit(
+    @Query('groupBy') groupBy: 'month' | 'year' | 'day',
+    @Query('unitsAgo') unitsAgo: number = 1,
+  ) {
+    return this.exsiccataService.countExsiccataDeletedPerTimeUnit(groupBy, unitsAgo);
+  }
+
+  @Get('count/states')
+  countByStates(){
+    return this.exsiccataService.findStatesWithMostExsicatas();
+  }
+
+  @Get('count/waiting-determination')
+  countWaitingDetermination(){
+    return this.exsiccataService.countExsiccataWaitingForDetermination();
+  }
+
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.exsiccataService.findOne(+id);

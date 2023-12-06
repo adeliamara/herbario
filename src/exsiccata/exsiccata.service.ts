@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateExsiccataDto } from './dto/create-exsiccata.dto';
 import { UpdateExsiccataDto } from './dto/update-exsiccata.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Entity, IsNull, Not, Repository, SelectQueryBuilder } from 'typeorm';
+import { Between, Entity, IsNull, Not, Repository, SelectQueryBuilder } from 'typeorm';
 import { Exsiccata } from './entities/exsiccata.entity';
 import { Family } from 'src/families/entities/family.entity';
 import { FamiliesService } from 'src/families/families.service';
@@ -74,8 +74,8 @@ export class ExsiccataService {
       .leftJoinAndSelect('exsiccata.genus', 'genus')
       .leftJoin('exsiccata.collector', 'collector')
       .addSelect(['collector.name'])
-      .leftJoin('exsiccata.determinator', 'determinator') 
-      .addSelect(['determinator.name']) 
+      .leftJoin('exsiccata.determinator', 'determinator')
+      .addSelect(['determinator.name'])
       .leftJoinAndSelect('exsiccata.location', 'location_table')
       .getMany();
 
@@ -95,9 +95,9 @@ export class ExsiccataService {
       .leftJoinAndSelect('exsiccata.location', 'location_table')
       .whereInIds(ids)  // Usamos o método whereInIds para filtrar por IDs
       .getMany();
-  
+
     return exsiccatas || [];
-  }  
+  }
 
   async findAllPaginateWithFilter(filterParams: {
     scientificName?: string;
@@ -122,8 +122,8 @@ export class ExsiccataService {
       .leftJoinAndSelect('exsiccata.genus', 'genus')
       .leftJoin('exsiccata.collector', 'collector')
       .addSelect(['collector.name'])
-      .leftJoin('exsiccata.determinator', 'determinator') 
-      .addSelect(['determinator.name']) 
+      .leftJoin('exsiccata.determinator', 'determinator')
+      .addSelect(['determinator.name'])
       .leftJoinAndSelect('exsiccata.location', 'location_table')
 
     if (scientificName) {
@@ -195,8 +195,8 @@ export class ExsiccataService {
       .leftJoinAndSelect('exsiccata.genus', 'genus')
       .leftJoin('exsiccata.collector', 'collector')
       .addSelect(['collector.name'])
-      .leftJoin('exsiccata.determinator', 'determinator') 
-      .addSelect(['determinator.name']) 
+      .leftJoin('exsiccata.determinator', 'determinator')
+      .addSelect(['determinator.name'])
       .leftJoinAndSelect('exsiccata.location', 'location_table')
       .where('exsiccata.id = :id', { id })
       .getOne();
@@ -287,14 +287,14 @@ export class ExsiccataService {
     return entity;
   }
 
-  async count(){
+  async count() {
     return await this.exsiccataRepository.count();
   }
 
   async getSoftDeleted() {
     const softDeletedExsiccata = await this.exsiccataRepository.find({
       where: {
-        deletedAt: Not(IsNull()), 
+        deletedAt: Not(IsNull()),
       },
       withDeleted: true,
     });
@@ -302,4 +302,81 @@ export class ExsiccataService {
     return softDeletedExsiccata;
   }
 
+  async findStatesWithMostExsicatas(): Promise<{ state: string, exsicatasCount: number }[]> {
+    const statesWithExsicatas = await this.exsiccataRepository
+      .createQueryBuilder('exsiccata')
+      .innerJoin('exsiccata.location', 'location')
+      .select(['location.state', 'COUNT(exsiccata.id) as exsicatasCount'])
+      .groupBy('location.state')
+      .orderBy('exsicatasCount', 'DESC')
+      .getRawMany();
+
+    return statesWithExsicatas;
+  }
+
+  async countExsiccataPerTimeUnit(
+    queryType: 'created' | 'deleted',
+    groupBy: 'month' | 'year' | 'day',
+    unitsAgo: number
+  ): Promise<{ timeUnit: string; count: number }[]> {
+    const now = new Date();
+    const startDate = new Date(now);
+
+    let formatString = '';
+
+    switch (groupBy) {
+      case 'month':
+        startDate.setMonth(now.getMonth() - unitsAgo);
+        formatString = 'MM/YYYY';
+        break;
+      case 'year':
+        startDate.setFullYear(now.getFullYear() - unitsAgo);
+        formatString = 'YYYY';
+        break;
+      case 'day':
+        startDate.setDate(now.getDate() - unitsAgo);
+        formatString = 'DD/MM/YYYY';
+        break;
+      default:
+        throw new BadRequestException('Unidade de tempo inválida. Escolha entre "month", "year" ou "day".');
+    }
+
+    const whereClause = queryType === 'created' ? { createdAt: Between(startDate, now) } : { deletedAt: Between(startDate, now) };
+
+    const exsiccataQueryBuilder = this.exsiccataRepository
+      .createQueryBuilder('exsiccata')
+      .select([
+        `TO_CHAR(exsiccata.createdAt, '${formatString}') AS timeUnit`,
+        'COUNT(exsiccata.id) AS count',
+      ])
+      .where(whereClause)
+      .groupBy('timeUnit')
+      .orderBy('timeUnit', 'ASC');
+
+    if (queryType === 'deleted') {
+      (exsiccataQueryBuilder as SelectQueryBuilder<any>).withDeleted();
+    }
+
+    const exsicatasPerTimeUnit = await exsiccataQueryBuilder.getRawMany();
+
+    return exsicatasPerTimeUnit;
+  
+  }
+
+  async countExsiccataCreatedPerTimeUnit(groupBy: 'month' | 'year' | 'day', unitsAgo: number): Promise<{ timeUnit: string; count: number }[]> {
+    return this.countExsiccataPerTimeUnit('created', groupBy, unitsAgo);
+  }
+
+  async countExsiccataDeletedPerTimeUnit(groupBy: 'month' | 'year' | 'day', unitsAgo: number): Promise<{ timeUnit: string; count: number }[]> {
+    return this.countExsiccataPerTimeUnit('deleted', groupBy, unitsAgo);
+  }
+
+  async countExsiccataWaitingForDetermination(): Promise<number> {
+    const count = await this.exsiccataRepository
+      .createQueryBuilder('exsiccata')
+      .where({ determinationDate: IsNull() })
+      .getCount();
+
+    return count;
+  }
 }
