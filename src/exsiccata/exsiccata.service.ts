@@ -52,7 +52,7 @@ export class ExsiccataService {
 
     const exsiccata: Exsiccata = this.exsiccataRepository.create(createExsiccataDto);
 
-    createExsiccataDto.scientificName = `${family.name} ${species.name}`;
+    exsiccata.scientificName = `${family.name} ${species.name}`;
 
     exsiccata.families = [family];
     exsiccata.species = [species];
