@@ -6,7 +6,7 @@ COPY package*.json ./
 
 RUN npm i -g @nestjs/cli
 
-RUN npm install --quiet --no-optional --no-fund --loglevel=error
+RUN npm install 
 
 RUN npm install --save @nestjs/jwt
 
