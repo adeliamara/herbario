@@ -17,7 +17,7 @@ export class UserRoleController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   create(@Body() createUserRoleDto: CreateUserRoleDto, @Req() request: Request) {    
-    const userReq:  User = request.user as User;
+    const userReq:  User = request.user as unknown as User;
     return this.userRoleService.create(userReq, createUserRoleDto);
   }
   
@@ -25,7 +25,7 @@ export class UserRoleController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   findOne(@Param('roleId') roleId: number, @Param('userId') userId: number, @Req() request: Request) {    
-    const userReq:  User = request.user as User;
+    const userReq:  User = request.user as unknown as User;
     return this.userRoleService.findOne(userReq, roleId, userId);
   }
 
@@ -33,7 +33,7 @@ export class UserRoleController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   remove(@Param('roleId') roleId: number, @Param('userId') userId: number, @Req() request: Request) {    
-    const userReq:  User = request.user as User;
+    const userReq:  User = request.user as unknown as User;
 
     return this.userRoleService.remove(userReq, roleId, userId);
   }
@@ -42,7 +42,7 @@ export class UserRoleController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   findAllByUser(@Param('userId') userId: number, @Req() request: Request) {    
-    const userReq:  User = request.user as User;
+    const userReq:  User = request.user as unknown as User;
     return this.userRoleService.findAllByUser(userReq, userId);
   }
 
@@ -50,7 +50,7 @@ export class UserRoleController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.USER)
   findAllMyUser(@Req() request: Request) {    
-    const userReq:  User = request.user as User;
+    const userReq:  User = request.user as unknown as User;
     return this.userRoleService.findAllMyUser(userReq);
   }
 }

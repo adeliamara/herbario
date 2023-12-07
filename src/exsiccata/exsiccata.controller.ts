@@ -23,7 +23,7 @@ export class ExsiccataController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.USER)
   async create(@Body() createExsiccataDto: CreateExsiccataDto, @Req() request: Request): Promise<Exsiccata> {
-    const userReq: User = request.user as User;
+    const userReq: User = request.user as unknown as User;
     return this.exsiccataService.create(userReq, createExsiccataDto);
   }
 

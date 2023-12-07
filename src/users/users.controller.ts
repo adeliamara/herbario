@@ -58,7 +58,7 @@ export class UsersController {
   @Roles(Role.ADMIN)
   async findOne(@Param('id') id: string, @Req() request: Request) {
 
-    const userReq: User = request.user as User;
+    const userReq: User = request.user as unknown as User;
 
     if (this.userIdIsDifferent(userReq, +id) && this.UserIsNotAdmin()) {
       throw new ForbiddenException();
@@ -82,7 +82,7 @@ export class UsersController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.USER)
   remove(@Param('id', ParseIntPipe) id: number, @Req() request: Request) {
-    const userReq: User = request.user as User;
+    const userReq: User = request.user as unknown as User;
 
     return this.usersService.remove(userReq, +id);
   }

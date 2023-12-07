@@ -19,7 +19,7 @@ export class PrintsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.USER)
   async create(@Body() createPrintDto: CreatePrintDto, @Req() request: Request): Promise<Print> {
-    const userReq: User = request.user as User;
+    const userReq: User = request.user as unknown as User;
     return this.printsService.create(userReq, createPrintDto);
   }
 
@@ -27,7 +27,7 @@ export class PrintsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.USER)
   findAllMyUser(@Req() request: Request): Promise<Exsiccata[]>  {
-    const userReq: User = request.user as User;
+    const userReq: User = request.user as unknown as User;
     return this.printsService.findAllExsicatasForPrintByUser(userReq);
   }
   
@@ -35,7 +35,7 @@ export class PrintsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.USER)
   findOne(@Param('id') id: string,@Req() request: Request): Promise<Exsiccata[]>  {
-    const userReq: User = request.user as User;
+    const userReq: User = request.user as unknown as User;
 
     return this.printsService.findOneRegister(userReq.id, +id);
   }
@@ -44,7 +44,7 @@ export class PrintsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.USER)
   clearAllListForPrint(@Req() request: Request) {
-    const userReq: User = request.user as User;
+    const userReq: User = request.user as unknown as User;
 
     return this.printsService.clearAllListForPrint(userReq);
   }
@@ -53,7 +53,7 @@ export class PrintsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.USER)
   remove(@Param('exsicataId') exsicataId: string, @Req() request: Request) {
-    const userReq: User = request.user as User;
+    const userReq: User = request.user as unknown as User;
 
     return this.printsService.remove(userReq, +exsicataId);
   }
