@@ -213,7 +213,7 @@ export class ExsiccataService {
   }
 
   async update(id: number, updateExsiccataDto: UpdateExsiccataDto) {
-    const { familyId, speciesId, genusId, collectorId, determinatorId, ...updateExsiccataData } = updateExsiccataDto;
+    const { familyId, speciesId, genusId, collectorId, determinatorId, locationId, ...updateExsiccataData } = updateExsiccataDto;
 
     let exsiccata = await this.findOne(id);
     if (!exsiccata) {
@@ -222,6 +222,7 @@ export class ExsiccataService {
 
     const collector = await this.getEntity(this.botanistsService, collectorId, 'Coletor não encontrado');
     const determinator = await this.getEntity(this.botanistsService, determinatorId, 'Determinador não encontrado');
+    const location = await this.getEntity(this.botanistsService, locationId, 'Localização não encontrado');
 
     const [family, genus, species] = await Promise.all([
       this.getEntity(this.familyService, familyId, 'Família não encontrada'),
@@ -236,6 +237,7 @@ export class ExsiccataService {
     Object.assign(exsiccata, {
       collector: collector || exsiccata.collector,
       determinator: determinator || exsiccata.determinator,
+      location: location || exsiccata.location,
       ...updateExsiccataData,
     });
 
