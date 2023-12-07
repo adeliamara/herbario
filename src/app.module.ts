@@ -15,7 +15,6 @@ import { ExsiccataGenusModule } from './exsiccata-genus/exsiccata-genus.module';
 import { BotanistsModule } from './botanists/botanists.module';
 import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ValidationPipe } from './setup/pipes/validation.pipe';
-import { ErrorMiddleware } from './setup/midleware/logger.midleware';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
@@ -23,21 +22,21 @@ import { RolesGuard } from './setup/guards/roles.guard';
 import { RoleModule } from './role/role.module';
 import { UserRoleModule } from './user-role/user-role.module';
 import { PrintsModule } from './prints/prints.module';
+import { ErrorMiddleware } from './setup/midleware/logger.midleware';
 
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,
-  }), ConfigModule.forRoot( {envFilePath: '.env'}), TypeOrmModule.forRoot(config), FamiliesModule, SpeciesModule, GenusModule, EnvironmentsModule, BotanistsModule, LocationsModule, ExsiccataModule, ExsiccataFamilyModule, ExsiccataSpeciesModule, ExsiccataGenusModule, AuthModule, UsersModule, RoleModule, UserRoleModule, PrintsModule],
+    envFilePath: '.env',
+  }), TypeOrmModule.forRoot(config), FamiliesModule, SpeciesModule, GenusModule, EnvironmentsModule, BotanistsModule, LocationsModule, ExsiccataModule, ExsiccataFamilyModule, ExsiccataSpeciesModule, ExsiccataGenusModule, AuthModule, UsersModule, RoleModule, UserRoleModule, PrintsModule],
   controllers: [AppController],
-  providers: [AppService,    {
+  providers: [AppService, {
     provide: APP_PIPE,
     useClass: ValidationPipe,
   },
   {
     provide: APP_INTERCEPTOR,
     useClass: ErrorMiddleware,
-  },
-
-],
+  }],
 })
 export class AppModule {}
